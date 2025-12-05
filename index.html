@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Flashlight Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; background-color: #f4f4f9; }
+        .container { max-width: 400px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        #on-button { background-color: #4CAF50; }
+        #on-button:hover { background-color: #45a049; }
+        #off-button { background-color: #f44336; }
+        #off-button:hover { background-color: #da190b; }
+        #status { margin-top: 20px; font-size: 1.1em; font-weight: bold; color: #555; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Remote Flashlight Control</h1>
+        <p>Click the buttons below to send a command to the connected Android devices.</p>
+        <div id="controls" class="hidden">
+            <button id="on-button">TURN ON</button>
+            <button id="off-button">TURN OFF</button>
+        </div>
+        <p id="status">Loading Firebase configuration...</p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+    <!-- Your Admin Script -->
+    <script src="admin.js"></script>
+</body>
+</html>
