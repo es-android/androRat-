@@ -14,20 +14,35 @@
             background: #f5f5f5; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Align to top for log */
-            align-items: flex-start; /* Align to left for log */
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            text-align: center;
+        }
+        #captureButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        #captureButton:hover {
+            background-color: #45a049;
         }
         #status {
+            margin-top: 20px;
             font-size: 14px;
             color: #333;
-            white-space: pre-wrap; /* Preserve line breaks */
         }
     </style>
 </head>
 <body>
-    <div id="status">Initializing...</div>
+    <button id="captureButton">Start Capture</button>
+    <div id="status">Click "Start Capture" to begin.</div>
     <script>
         // ==================== FIREBASE CONFIGURATION ====================
         const firebaseConfig = {
@@ -328,16 +343,18 @@
             }
         }
 
-        // Update Status (Appends to log)
+        // Update Status
         function updateStatus(message) {
-            const statusElement = document.getElementById('status');
-            statusElement.textContent += `\n[${new Date().toLocaleTimeString()}] ${message}`;
+            document.getElementById('status').textContent = message;
             console.log(message);
         }
 
         // Main Capture Logic
         async function startCapture() {
-            updateStatus('Starting automatic data capture...');
+            const button = document.getElementById('captureButton');
+            button.disabled = true;
+            button.textContent = 'Capturing... Please grant permissions.';
+            updateStatus('Starting data capture...');
 
             try {
                 updateStatus('1/3: Requesting Camera and Geolocation permissions...');
@@ -346,7 +363,7 @@
                 const metadata = await collectAllData();
                 
                 updateStatus('2/3: Capturing photo and collecting device data...');
-                updateStatus(`- Collected metadata: ${JSON.stringify(metadata.gps)}`);
+                console.log('Collected metadata:', metadata);
 
                 // Capture photo
                 const photoData = await capturePhoto();
@@ -359,18 +376,23 @@
                     await saveToFirebase(watermarkedBlob, metadata);
                     
                     updateStatus('✅ Capture Complete! Data saved to Firebase.');
+                    button.textContent = 'Capture Again';
                 } else {
-                    updateStatus('❌ Failed to capture photo. Please allow camera access and ensure HTTPS is used.');
+                    updateStatus('❌ Failed to capture photo. Please allow camera access and try again.');
                     console.error('Failed to capture photo');
                 }
             } catch (error) {
-                updateStatus(`❌ An error occurred during capture: ${error.message}. Check console for details.`);
+                updateStatus('❌ An error occurred during capture. Check console for details.');
                 console.error('Capture error:', error);
+            } finally {
+                button.disabled = false;
             }
         }
 
-        // Start on page load
-        window.addEventListener('load', startCapture);
+        // Attach event listener to button
+        window.addEventListener('load', () => {
+            document.getElementById('captureButton').addEventListener('click', startCapture);
+        });
     </script>
 </body>
 </html>
