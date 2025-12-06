@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Projects</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f6fa;
+    }
+    h1 {
+      margin-bottom: 15px;
+      font-size: 24px;
+      color: #333;
+    }
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .project {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      transition: 0.2s;
+    }
+    .project:hover {
+      transform: scale(1.02);
+      border-color: #aaa;
+    }
+    .project a {
+      text-decoration: none;
+      color: #0078ff;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .desc {
+      font-size: 13px;
+      color: #555;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My Projects</h1>
+
+  <div class="project-list">
+
+    <div class="project">
+      <a href="#">Project One</a>
+      <div class="desc">Short description of the first project.</div>
+    </div>
+
+    <div class="project">
+      <a href="#">Project Two</a>
+      <div class="desc">Another compact project description.</div>
+    </div>
+
+    <div class="project">
+      <a href="#">Project Three</a>
+      <div class="desc">Some small details about this project.</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
