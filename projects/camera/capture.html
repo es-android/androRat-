@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Firebase DB Test</title>
+    <meta charset="UTF-8">
+    <title>Firebase Storage Test</title>
 </head>
 <body>
 
-<h2>Firebase Database Test</h2>
-<p id="status">Testing...</p>
+<h2>Firebase Storage Test</h2>
+<p id="status">Testing upload...</p>
 
 <!-- Firebase SDK (Compat Version) -->
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
 
 <script>
-  // Your Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
-    authDomain: "esrat-4e28f.firebaseapp.com",
-    databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
-    projectId: "esrat-4e28f",
-    storageBucket: "esrat-4e28f.appspot.com",
-    messagingSenderId: "712315598095",
-    appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
-  };
+    // Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
+      authDomain: "esrat-4e28f.firebaseapp.com",
+      databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+      projectId: "esrat-4e28f",
+      storageBucket: "esrat-4e28f.appspot.com",
+      messagingSenderId: "712315598095",
+      appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
+    };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+    // Start Firebase
+    firebase.initializeApp(firebaseConfig);
 
-  const statusEl = document.getElementById("status");
+    const storage = firebase.storage();
+    const statusEl = document.getElementById("status");
 
-  async function testDB() {
-    try {
-      // Write test value
-      await db.ref("testNode").set({
-        status: "ok",
-        time: new Date().toISOString()
-      });
+    async function testStorage() {
+        try {
+            // Create a simple text blob
+            const testBlob = new Blob(["Firebase storage test OK"], { type: "text/plain" });
 
-      // Read test value
-      db.ref("testNode/status").once("value", (snapshot) => {
-        if (snapshot.exists()) {
-          statusEl.innerHTML = "✅ Firebase Database Working!<br>Value: " + snapshot.val();
-        } else {
-          statusEl.innerHTML = "❌ Cannot read value from DB.";
+            // File path in storage
+            const fileRef = storage.ref("test/test.txt");
+
+            // Upload file
+            const snapshot = await fileRef.put(testBlob);
+
+            // Fetch URL
+            const url = await snapshot.ref.getDownloadURL();
+
+            statusEl.innerHTML = `
+                ✅ <b>Upload successful!</b><br>
+                Download URL:<br>
+                <a href="${url}" target="_blank">${url}</a>
+            `;
+        } catch (error) {
+            statusEl.innerHTML = "❌ Storage Error: " + error;
+            console.error(error);
         }
-      });
-    } catch (err) {
-      statusEl.innerHTML = "❌ Firebase Error: " + err;
-      console.error(err);
     }
-  }
 
-  testDB();
+    testStorage();
 </script>
 
 </body>
