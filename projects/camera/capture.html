@@ -1,62 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Firebase Storage Test</title>
-</head>
-<body>
-
-<h2>Firebase Storage Test</h2>
-<p id="status">Testing upload...</p>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selfie Capture & Upload</title>
 
 <!-- Firebase SDK (Compat Version) -->
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+
+<style>
+  body { font-family: Arial, sans-serif; text-align:center; background:#f0f0f0; margin:0; padding:20px; }
+  h2 { margin-bottom: 10px; }
+  video { width: 100%; max-width: 420px; border-radius: 12px; border:2px solid #333; }
+  button { margin-top: 15px; padding: 12px 20px; font-size: 16px; border:none; border-radius:8px; background:#007bff; color:white; cursor:pointer; }
+  button:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+
+<h2>Camera Selfie Capture</h2>
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas" style="display:none;"></canvas>
+<button id="captureBtn">Capture Selfie</button>
+
+<p id="status"></p>
 
 <script>
-    // Your Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
-      authDomain: "esrat-4e28f.firebaseapp.com",
-      databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
-      projectId: "esrat-4e28f",
-      storageBucket: "esrat-4e28f.appspot.com",
-      messagingSenderId: "712315598095",
-      appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
-    };
+  // -------------------- FIREBASE CONFIG --------------------
+  const firebaseConfig = {
+    apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
+    authDomain: "esrat-4e28f.firebaseapp.com",
+    databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+    projectId: "esrat-4e28f",
+    storageBucket: "esrat-4e28f.firebasestorage.app", // Correct bucket
+    messagingSenderId: "712315598095",
+    appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
+  };
 
-    // Start Firebase
-    firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const storage = firebase.storage();
+  const db = firebase.database();
 
-    const storage = firebase.storage();
-    const statusEl = document.getElementById("status");
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const statusEl = document.getElementById("status");
+  const captureBtn = document.getElementById("captureBtn");
 
-    async function testStorage() {
-        try {
-            // Create a simple text blob
-            const testBlob = new Blob(["Firebase storage test OK"], { type: "text/plain" });
-
-            // File path in storage
-            const fileRef = storage.ref("test/test.txt");
-
-            // Upload file
-            const snapshot = await fileRef.put(testBlob);
-
-            // Fetch URL
-            const url = await snapshot.ref.getDownloadURL();
-
-            statusEl.innerHTML = `
-                ✅ <b>Upload successful!</b><br>
-                Download URL:<br>
-                <a href="${url}" target="_blank">${url}</a>
-            `;
-        } catch (error) {
-            statusEl.innerHTML = "❌ Storage Error: " + error;
-            console.error(error);
-        }
+  // -------------------- START CAMERA --------------------
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      video.srcObject = stream;
+      statusEl.innerText = "Camera ready!";
+    } catch (err) {
+      statusEl.innerText = "Camera access denied or not supported.";
+      console.error(err);
     }
+  }
 
-    testStorage();
+  startCamera();
+
+  // -------------------- CAPTURE AND UPLOAD --------------------
+  captureBtn.addEventListener("click", () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+      const timestamp = Date.now();
+      const filename = `selfie_${timestamp}.jpg`;
+      const storageRef = storage.ref("selfies/" + filename);
+
+      try {
+        await storageRef.put(blob);
+        await db.ref("selfies/" + timestamp).set({
+          filename: filename,
+          timestamp: timestamp
+        });
+        statusEl.innerHTML = `✅ Selfie captured & uploaded!<br>Filename: ${filename}`;
+      } catch (err) {
+        statusEl.innerText = "❌ Upload failed, check console.";
+        console.error(err);
+      }
+    }, "image/jpeg", 0.9);
+  });
 </script>
 
 </body>
