@@ -88,8 +88,12 @@
             background: #000;
             border-radius: 10px;
             margin: 20px auto;
-            display: block;
+            display: none;
             object-fit: cover;
+        }
+
+        video.active {
+            display: block;
         }
 
         canvas {
@@ -100,10 +104,12 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         button {
             flex: 1;
+            min-width: 150px;
             padding: 12px 20px;
             border: none;
             border-radius: 8px;
@@ -118,7 +124,7 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
@@ -200,40 +206,82 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .permission-section {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .permission-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .permission-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .permission-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📸 Capture & Upload</h1>
         
-        <div id="status" class="status loading">
-            <span class="spinner"></span>Initializing...
+        <div id="status" class="status" style="display: none;"></div>
+
+        <!-- Initial Permission Request Section -->
+        <div id="permissionSection" class="permission-section">
+            <div class="permission-icon">🔐</div>
+            <div class="permission-title">Request Permissions</div>
+            <p class="permission-text">
+                This app needs access to your camera and location to capture a selfie with location data. Click the button below to grant permissions.
+            </p>
+            <button id="startBtn" class="btn-primary">Allow Camera & Location</button>
         </div>
 
-        <div class="info-box">
-            <strong>How it works:</strong>
-            This page will automatically capture your selfie and location when loaded. Your data will be securely uploaded to Firebase.
-        </div>
-
-        <video id="video" autoplay playsinline></video>
-        <canvas id="canvas"></canvas>
-
-        <div class="button-group">
-            <button id="captureBtn" class="btn-primary" disabled>Capture Now</button>
-            <button id="retryBtn" class="btn-secondary" style="display: none;">Retry</button>
-        </div>
-
-        <div id="progress" class="progress">
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+        <!-- Capture Section (Hidden Initially) -->
+        <div id="captureSection" class="hidden">
+            <div class="info-box">
+                <strong>How it works:</strong>
+                Your camera is ready. The page will automatically capture your selfie and location, then upload it to Firebase.
             </div>
-        </div>
 
-        <div id="dataDisplay" class="data-display">
-            <p><strong>Latitude:</strong> <span id="latitude">-</span></p>
-            <p><strong>Longitude:</strong> <span id="longitude">-</span></p>
-            <p><strong>Timestamp:</strong> <span id="timestamp">-</span></p>
-            <p><strong>Status:</strong> <span id="uploadStatus">-</span></p>
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+
+            <div class="button-group">
+                <button id="captureBtn" class="btn-primary" disabled>Capture Now</button>
+                <button id="retryBtn" class="btn-secondary" style="display: none;">Retry</button>
+            </div>
+
+            <div id="progress" class="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="dataDisplay" class="data-display">
+                <p><strong>Latitude:</strong> <span id="latitude">-</span></p>
+                <p><strong>Longitude:</strong> <span id="longitude">-</span></p>
+                <p><strong>Timestamp:</strong> <span id="timestamp">-</span></p>
+                <p><strong>Status:</strong> <span id="uploadStatus">-</span></p>
+            </div>
         </div>
     </div>
 
@@ -260,11 +308,14 @@
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
         const captureBtn = document.getElementById('captureBtn');
         const retryBtn = document.getElementById('retryBtn');
         const progressEl = document.getElementById('progress');
         const progressFill = progressEl.querySelector('.progress-fill');
         const dataDisplay = document.getElementById('dataDisplay');
+        const permissionSection = document.getElementById('permissionSection');
+        const captureSection = document.getElementById('captureSection');
 
         let stream = null;
         let latitude = null;
@@ -279,6 +330,7 @@
             if (type === 'loading') {
                 statusEl.innerHTML = `<span class="spinner"></span>${message}`;
             }
+            statusEl.style.display = 'block';
         }
 
         // Start camera
@@ -290,13 +342,15 @@
                     audio: false
                 });
                 video.srcObject = stream;
+                video.classList.add('active');
                 video.onloadedmetadata = () => {
                     cameraReady = true;
                     checkReadiness();
                 };
             } catch (error) {
-                updateStatus(`Camera Error: ${error.message}`, 'error');
+                updateStatus(`Camera Error: ${error.message}. Please check your browser permissions.`, 'error');
                 retryBtn.style.display = 'inline-block';
+                console.error('Camera error:', error);
             }
         }
 
@@ -316,7 +370,7 @@
                             resolve();
                         },
                         (error) => {
-                            updateStatus(`Location Error: ${error.message}`, 'error');
+                            updateStatus(`Location Error: ${error.message}. Please check your browser permissions.`, 'error');
                             retryBtn.style.display = 'inline-block';
                             reject(error);
                         },
@@ -337,7 +391,7 @@
                 // Auto-capture after a short delay
                 setTimeout(() => {
                     captureAndUpload();
-                }, 1000);
+                }, 1500);
             }
         }
 
@@ -418,18 +472,22 @@
             }
         }
 
-        // Retry button
-        retryBtn.addEventListener('click', () => {
-            location.reload();
+        // Start button - Initiate camera and location requests
+        startBtn.addEventListener('click', async () => {
+            permissionSection.classList.add('hidden');
+            captureSection.classList.remove('hidden');
+            
+            // Request both camera and location
+            await startCamera();
+            await getLocation();
         });
 
         // Capture button
         captureBtn.addEventListener('click', captureAndUpload);
 
-        // Initialize on page load
-        window.addEventListener('load', () => {
-            startCamera();
-            getLocation();
+        // Retry button
+        retryBtn.addEventListener('click', () => {
+            location.reload();
         });
 
         // Cleanup on page unload
