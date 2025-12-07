@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Camera Captures</title>
+  <title>Camera Capture</title>
+
+  <!-- Firebase App -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+  <!-- Firebase Storage -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+  <!-- Firebase Realtime Database -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 </head>
 <body>
 
@@ -12,6 +22,8 @@
 
 <button id="captureBtn">Capture</button>
 
-<script type="module" src="app.js"></script>
+<!-- Load your script AFTER Firebase scripts -->
+<script src="app.js"></script>
+
 </body>
 </html>
