@@ -1,105 +1,148 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Selfie Gallery</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-
-        .item {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-
-        img {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 8px;
-        }
-
-        .meta {
-            margin-top: 10px;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        h2 {
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-
-<h2>Selfie Gallery</h2>
-<div id="container">Loading...</div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confession Gallery</title>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  body { font-family:'Roboto', sans-serif; background: #111; color:#eee; margin:0; padding:0; }
+  h1 { text-align:center; padding:20px; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,0.7); }
+  
+  #gallery { 
+    display:grid; 
+    grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); 
+    gap:20px; 
+    padding:20px; 
+  }
+
+  .card {
+    background: rgba(30,30,30,0.95);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    display:flex;
+    flex-direction:column;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.8);
+  }
+
+  .card img {
+    width:100%;
+    object-fit:cover;
+    max-height:300px;
+    background:#222;
+  }
+
+  .card-content {
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .card-text { font-size:1em; }
+  .card-footer { display:flex; justify-content:space-between; font-size:0.85em; color:#ccc; align-items:center; }
+
+  .like { color:#ff5f5f; font-weight:bold; display:flex; align-items:center; gap:5px; }
+
+  @media(max-width:600px){
+    #gallery { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📸 Confession Gallery</h1>
+<div id="gallery"></div>
 
 <script>
-// ------------------------------------------------
-//  FIREBASE CONFIG (SAME AS capture.html)
-// ------------------------------------------------
-const firebaseConfig = {
-    apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
+  // ----- Firebase Config -----
+  const firebaseConfig = {
+    apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
     authDomain: "esrat-4e28f.firebaseapp.com",
     databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
     projectId: "esrat-4e28f",
-    storageBucket: "esrat-4e28f.appspot.com",
+    storageBucket: "esrat-4e28f.firebasestorage.app",
     messagingSenderId: "712315598095",
-    appId: "1:712315598095:android:ed0f042ee1d5410dfb7a7a"
-};
+    appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
+  };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const storage = firebase.storage();
 
-const container = document.getElementById("container");
+  const gallery = document.getElementById('gallery');
 
-// ------------------------------------------------
-//  LOAD SELFIES
-// ------------------------------------------------
-db.ref("selfies").on("value", snapshot => {
+  // Listen for new confessions
+  db.ref("confessions").orderByChild("timestamp").on("child_added", snapshot => {
     const data = snapshot.val();
+    const card = document.createElement('div');
+    card.className = 'card';
 
-    if (!data) {
-        container.innerHTML = "<p>No selfies yet.</p>";
-        return;
+    const content = document.createElement('div');
+    content.className = 'card-content';
+
+    // Text
+    if(data.text) {
+      const textDiv = document.createElement('div');
+      textDiv.className = 'card-text';
+      textDiv.innerText = data.text;
+      content.appendChild(textDiv);
     }
 
-    // Convert object → array
-    const list = Object.values(data);
+    // Image
+    if(data.image){
+      const img = document.createElement('img');
+      storage.ref(data.image).getDownloadURL().then(url => img.src = url);
+      content.appendChild(img);
+    }
 
-    // Sort newest first
-    list.sort((a, b) => b.timestamp - a.timestamp);
+    // Footer: timestamp + likes
+    const footer = document.createElement('div');
+    footer.className = 'card-footer';
+    const time = new Date(data.timestamp).toLocaleString();
+    footer.innerHTML = `<span>${time}</span>`;
 
-    container.innerHTML = "";
+    const likeSpan = document.createElement('span');
+    likeSpan.className = 'like';
+    likeSpan.innerHTML = `❤️ ${data.likes}`;
+    footer.appendChild(likeSpan);
 
-    list.forEach(item => {
-        const readableTime = new Date(item.timestamp).toLocaleString();
+    content.appendChild(footer);
+    card.appendChild(content);
+    gallery.prepend(card); // newest first
+  });
 
-        const block = document.createElement("div");
-        block.className = "item";
-        block.innerHTML = `
-            <img src="${item.url}" alt="Selfie">
+  // Update likes in real-time
+  db.ref("confessions").on("child_changed", snapshot => {
+    const data = snapshot.val();
+    const cards = gallery.children;
+    for(let card of cards){
+      const footer = card.querySelector('.card-footer');
+      if(!footer) continue;
+      const likeSpan = footer.querySelector('.like');
+      if(!likeSpan) continue;
+      const timeText = footer.querySelector('span').innerText;
+      if(new Date(data.timestamp).toLocaleString() === timeText){
+        likeSpan.innerHTML = `❤️ ${data.likes}`;
+      }
+    }
+  });
 
-            <div class="meta">
-                <strong>Filename:</strong> ${item.filename}<br>
-                <strong>Timestamp:</strong> ${readableTime}
-            </div>
-        `;
-
-        container.appendChild(block);
-    });
-});
 </script>
 
 </body>
