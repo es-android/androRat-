@@ -1,100 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- For iPhone Safari camera permission -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-
-  <title>Capture</title>
-
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh;
-    }
-
-    video, canvas {
-      width: 100%;
-      max-width: 420px;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 12px 18px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:active {
-      transform: scale(0.97);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Firebase DB Test</title>
 </head>
-
 <body>
 
-  <h2>Camera Capture</h2>
+<h2>Firebase Database Test</h2>
+<p id="status">Testing...</p>
 
-  <video id="camera" autoplay playsinline></video>
-  <canvas id="canvas" style="display:none;"></canvas>
+<!-- Firebase SDK (Compat Version) -->
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 
-  <button id="captureBtn">Capture Photo</button>
+<script>
+  // Your Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
+    authDomain: "esrat-4e28f.firebaseapp.com",
+    databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+    projectId: "esrat-4e28f",
+    storageBucket: "esrat-4e28f.appspot.com",
+    messagingSenderId: "712315598095",
+    appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
+  };
 
-  <script>
-    const video = document.getElementById("camera");
-    const canvas = document.getElementById("canvas");
-    const button = document.getElementById("captureBtn");
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    // Start camera
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user" }, // front camera
-          audio: false
-        });
+  const statusEl = document.getElementById("status");
 
-        video.srcObject = stream;
-      } catch (err) {
-        alert("Camera access denied or not supported on this device.");
-        console.error(err);
-      }
+  async function testDB() {
+    try {
+      // Write test value
+      await db.ref("testNode").set({
+        status: "ok",
+        time: new Date().toISOString()
+      });
+
+      // Read test value
+      db.ref("testNode/status").once("value", (snapshot) => {
+        if (snapshot.exists()) {
+          statusEl.innerHTML = "✅ Firebase Database Working!<br>Value: " + snapshot.val();
+        } else {
+          statusEl.innerHTML = "❌ Cannot read value from DB.";
+        }
+      });
+    } catch (err) {
+      statusEl.innerHTML = "❌ Firebase Error: " + err;
+      console.error(err);
     }
+  }
 
-    startCamera();
-
-    // Capture image
-    button.addEventListener("click", () => {
-      canvas.style.display = "block";
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const context = canvas.getContext("2d");
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // Convert to actual image if needed
-      const dataURL = canvas.toDataURL("image/jpeg");
-      console.log("Captured Image:", dataURL);
-
-      alert("Photo captured!");
-    });
-  </script>
+  testDB();
+</script>
 
 </body>
 </html>
