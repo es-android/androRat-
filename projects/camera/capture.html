@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Capture Selfie</title>
+</head>
+<body>
+    <h2>Capturing Selfie...</h2>
+
+    <video id="video" autoplay playsinline style="width: 300px;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+
+    <script>
+        // --- Firebase Config ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
+            authDomain: "esrat-4e28f.firebaseapp.com",
+            databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+            projectId: "esrat-4e28f",
+            storageBucket: "esrat-4e28f.firebasestorage.app",
+            messagingSenderId: "712315598095",
+            appId: "1:712315598095:web:xxxx"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+        const db = firebase.database();
+
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+
+        // Start camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+
+                // Wait 1 second then capture automatically
+                setTimeout(captureSelfie, 1200);
+            })
+            .catch(err => {
+                alert("Camera access denied.");
+                console.error(err);
+            });
+
+        function captureSelfie() {
+            const width = video.videoWidth;
+            const height = video.videoHeight;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, width, height);
+
+            canvas.toBlob(blob => uploadSelfie(blob), "image/jpeg", 0.9);
+        }
+
+        function uploadSelfie(blob) {
+            const fileName = "selfies/" + Date.now() + ".jpg";
+            const storageRef = storage.ref().child(fileName);
+
+            storageRef.put(blob).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(url => {
+                    db.ref("selfies").push(url);
+                    document.body.innerHTML = "<h2>Selfie Uploaded Successfully!</h2>";
+                });
+            });
+        }
+    </script>
+</body>
+</html>
