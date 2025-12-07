@@ -1913,7 +1913,7 @@ async function fetchSacredKeys() {
             });
         });
         async function verifyEnigmaticCredentials() {
-            const sacredKeys = await retrieveSacredKeys();
+            const sacredKeys = await fetchSacredKeys();
             const unlockedIdentity = unlockArcaneSecrets(sacredKeys.arcaneCipheredIdentity, sacredKeys.mysticalEssenceOfCipherIdentity, sacredKeys.celestialSecretKeystone);
             const unlockedPassage = unlockArcaneSecrets(sacredKeys.arcaneCipheredPassage, sacredKeys.mysticalEssenceOfCipherPassage, sacredKeys.celestialSecretKeystone);
             const inputIdentity = document.getElementById("username").value;
