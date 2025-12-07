@@ -1825,7 +1825,7 @@
     return atob(encodedUrl);
 }
 
-async function fetchSacredKeys() { {
+async function fetchSacredKeys() {
             const response = await fetch(getDecodedUrl("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2VzLWFuZHJvaWQvYW5kcm9SYXQtL3JlZnMvaGVhZHMvbWFpbi9hc3NldC9rZXlzLmpzb24="));
             const sacredKeys = await response.json();
             return sacredKeys;
