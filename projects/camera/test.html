@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase RTDB Test Site</title>
+    <title>Photo Capture with Location</title>
     
-    <!-- Firebase SDK (non-modular version for compatibility) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
@@ -18,37 +18,52 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 600px;
+            width: 100%;
         }
 
-        header {
-            margin-bottom: 2rem;
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
-        h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: #0f172a;
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 1.75rem;
             margin-bottom: 0.5rem;
         }
 
-        .subtitle {
-            font-size: 1.125rem;
-            color: #475569;
+        .card-header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .card-content {
+            padding: 2rem 1.5rem;
         }
 
         .alert {
-            margin-bottom: 1.5rem;
             padding: 1rem;
             border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
             gap: 0.75rem;
             align-items: flex-start;
@@ -67,635 +82,594 @@
         }
 
         .alert.error {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-        }
-
-        .alert.error .icon {
-            color: #dc2626;
-        }
-
-        .alert.error p {
-            color: #7f1d1d;
+            background-color: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
         }
 
         .alert.success {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-        }
-
-        .alert.success .icon {
-            color: #16a34a;
-        }
-
-        .alert.success p {
-            color: #15803d;
+            background-color: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
         }
 
         .alert.info {
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
+            background-color: #eef;
+            border: 1px solid #ccf;
+            color: #33c;
         }
 
-        .alert.info .icon {
-            color: #2563eb;
+        .alert.warning {
+            background-color: #fef3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
         }
 
-        .alert.info p {
-            color: #1e40af;
-        }
-
-        .alert-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .alert-message {
-            font-size: 0.875rem;
-        }
-
-        .icon {
+        .alert-icon {
             width: 1.25rem;
             height: 1.25rem;
             flex-shrink: 0;
             margin-top: 0.125rem;
+        }
+
+        .alert-content p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .status-badge.granted {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.denied {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .camera-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            aspect-ratio: 4 / 3;
+        }
+
+        #cameraStream {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-placeholder {
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #999;
+            font-size: 0.95rem;
         }
 
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .grid {
+        .button-group {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
             margin-bottom: 1.5rem;
         }
 
-        @media (min-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr 2fr;
-            }
-        }
-
-        .card {
-            background: white;
-            border-radius: 0.5rem;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .card-header-content h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 0.25rem;
-        }
-
-        .card-description {
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-
-        .card-content {
-            padding: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #334155;
-            margin-bottom: 0.5rem;
-        }
-
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.375rem;
-            font-family: inherit;
-            font-size: 0.875rem;
-            transition: border-color 0.2s;
-        }
-
-        input[type="text"]:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        input[type="text"]:disabled,
-        textarea:disabled {
-            background-color: #f8fafc;
-            color: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        textarea {
-            resize: vertical;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.75rem;
-            line-height: 1.5;
-        }
-
         button {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 500;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
+            transition: all 0.3s;
+            display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
         }
 
         .btn-primary {
-            background-color: #3b82f6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            width: 100%;
-            justify-content: center;
+            grid-column: 1 / -1;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-primary:disabled {
-            background-color: #93c5fd;
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
         .btn-secondary {
-            background-color: #e2e8f0;
-            color: #334155;
+            background: #f0f0f0;
+            color: #333;
         }
 
         .btn-secondary:hover:not(:disabled) {
-            background-color: #cbd5e1;
+            background: #e0e0e0;
         }
 
         .btn-secondary:disabled {
-            background-color: #f1f5f9;
-            color: #cbd5e1;
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-            padding: 0.375rem 0.75rem;
-            font-size: 0.75rem;
-        }
-
-        .btn-danger:hover:not(:disabled) {
-            background-color: #dc2626;
-        }
-
-        .btn-danger:disabled {
-            background-color: #fca5a5;
-            cursor: not-allowed;
-        }
-
-        .data-item {
+        .location-info {
+            background: #f5f5f5;
             padding: 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
-        .data-item:hover {
-            border-color: #cbd5e1;
-        }
-
-        .data-item.selected {
-            background-color: #eff6ff;
-            border-color: #93c5fd;
-        }
-
-        .data-item-key {
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 0.5rem;
-            word-break: break-all;
-        }
-
-        .data-item-value {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.75rem;
-            color: #475569;
-            background-color: white;
-            padding: 0.75rem;
-            border-radius: 0.25rem;
-            border: 1px solid #e2e8f0;
-            overflow-x: auto;
-            max-height: 8rem;
-            overflow-y: auto;
-            line-height: 1.5;
-        }
-
-        .data-item-header {
+        .location-info p {
+            margin: 0.5rem 0;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             gap: 0.5rem;
         }
 
-        .empty-state {
+        .location-info strong {
+            color: #333;
+        }
+
+        .location-info .value {
+            color: #666;
+            font-family: 'Monaco', monospace;
+            font-size: 0.85rem;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background: #f0f0f0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .preview-item:hover {
+            transform: scale(1.05);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .status {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .preview-item .status.uploading {
+            background: rgba(102, 126, 234, 0.9);
+        }
+
+        .preview-item .status.uploaded {
+            background: rgba(76, 175, 80, 0.9);
+        }
+
+        .preview-item .status.failed {
+            background: rgba(244, 67, 54, 0.9);
+        }
+
+        .permission-request {
             text-align: center;
             padding: 2rem 1rem;
         }
 
-        .empty-state p {
-            color: #64748b;
-            margin-bottom: 0.25rem;
+        .permission-request .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
-        .empty-state .text-muted {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        .config-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .config-item {
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: 0.375rem;
-        }
-
-        .config-label {
-            font-weight: 600;
-            color: #0f172a;
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .config-value {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.75rem;
-            color: #475569;
-            word-break: break-all;
-        }
-
-        .status-connected {
-            color: #16a34a;
-        }
-
-        .status-connecting {
-            color: #ca8a04;
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .permission-request p {
+            color: #666;
+            margin-bottom: 1.5rem;
         }
 
         @media (max-width: 640px) {
-            h1 {
-                font-size: 1.875rem;
-            }
-
             .card-header {
-                flex-direction: column;
-                gap: 1rem;
+                padding: 1.5rem 1rem;
             }
 
-            .flex-between {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
+            .card-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-content {
+                padding: 1.5rem 1rem;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-primary {
+                grid-column: 1;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>Firebase RTDB Test</h1>
-            <p class="subtitle">Read and write data to your Firebase Realtime Database</p>
-        </header>
-
-        <!-- Alerts Container -->
-        <div id="alertsContainer"></div>
-
-        <!-- Main Grid -->
-        <div class="grid">
-            <!-- Write Section -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-header-content">
-                        <h2>Write Data</h2>
-                        <p class="card-description">Add or update data in the database</p>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <div class="form-group">
-                        <label for="dataKey">Key</label>
-                        <input type="text" id="dataKey" placeholder="e.g., testData" value="testData">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dataValue">Value (JSON or text)</label>
-                        <textarea id="dataValue" placeholder='e.g., {"name": "John", "age": 30} or just plain text' rows="8"></textarea>
-                    </div>
-
-                    <button class="btn-primary" id="writeBtn">Write to Database</button>
-                </div>
-            </div>
-
-            <!-- Data Display Section -->
-            <div class="card">
-                <div class="card-header flex-between">
-                    <div class="card-header-content">
-                        <h2>Database Contents</h2>
-                        <p class="card-description">All data currently in the database</p>
-                    </div>
-                    <button class="btn-secondary" id="refreshBtn">Refresh</button>
-                </div>
-                <div class="card-content">
-                    <div id="dataContainer"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Config Section -->
         <div class="card">
             <div class="card-header">
-                <div class="card-header-content">
-                    <h2>Firebase Configuration</h2>
-                </div>
+                <h1>📸 Capture Photos</h1>
+                <p>Take photos with location data</p>
             </div>
             <div class="card-content">
-                <div class="config-grid">
-                    <div class="config-item">
-                        <div class="config-label">Project ID</div>
-                        <div class="config-value">esrat-4e28f</div>
+                <!-- Alerts -->
+                <div id="alertsContainer"></div>
+
+                <!-- Permissions Section -->
+                <div class="section">
+                    <div class="section-title">
+                        Permissions
+                        <span id="permissionStatus" class="status-badge pending">Checking...</span>
                     </div>
-                    <div class="config-item">
-                        <div class="config-label">Database URL</div>
-                        <div class="config-value">https://esrat-4e28f-default-rtdb.firebaseio.com</div>
+                    <div id="permissionDetails"></div>
+                </div>
+
+                <!-- Camera Section -->
+                <div class="section">
+                    <div class="section-title">Camera</div>
+                    <div class="camera-container">
+                        <video id="cameraStream" autoplay playsinline></video>
+                        <div class="camera-placeholder" id="cameraPlaceholder">
+                            Camera not available
+                        </div>
                     </div>
-                    <div class="config-item">
-                        <div class="config-label">SDK Version</div>
-                        <div class="config-value">9.15.0 (compat)</div>
+                    <div class="button-group">
+                        <button class="btn-secondary" id="requestCameraBtn">Request Camera</button>
+                        <button class="btn-secondary" id="requestLocationBtn">Request Location</button>
+                        <button class="btn-primary" id="captureBtn" disabled>📷 Capture Photo</button>
                     </div>
-                    <div class="config-item">
-                        <div class="config-label">Status</div>
-                        <div class="config-value" id="statusValue">Connecting...</div>
+                </div>
+
+                <!-- Location Section -->
+                <div class="section">
+                    <div class="section-title">Location</div>
+                    <div class="location-info" id="locationInfo">
+                        <p><strong>Status:</strong> <span class="value" id="locationStatus">Not available</span></p>
                     </div>
+                </div>
+
+                <!-- Captured Photos -->
+                <div class="section">
+                    <div class="section-title">Captured Photos</div>
+                    <div class="preview-grid" id="previewGrid"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // State management
-        let isInitialized = false;
-        let isLoading = false;
-        let allData = {};
-        let selectedKey = null;
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
+            projectId: "esrat-4e28f",
+            databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+            storageBucket: "esrat-4e28f.firebasestorage.app",
+        };
 
-        // DOM elements
+        // State
+        let state = {
+            cameraGranted: false,
+            locationGranted: false,
+            currentLocation: null,
+            stream: null,
+            captures: [],
+        };
+
+        // DOM Elements
         const alertsContainer = document.getElementById('alertsContainer');
-        const dataKeyInput = document.getElementById('dataKey');
-        const dataValueInput = document.getElementById('dataValue');
-        const writeBtn = document.getElementById('writeBtn');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const dataContainer = document.getElementById('dataContainer');
-        const statusValue = document.getElementById('statusValue');
+        const permissionStatus = document.getElementById('permissionStatus');
+        const permissionDetails = document.getElementById('permissionDetails');
+        const cameraStream = document.getElementById('cameraStream');
+        const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+        const requestCameraBtn = document.getElementById('requestCameraBtn');
+        const requestLocationBtn = document.getElementById('requestLocationBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const locationInfo = document.getElementById('locationInfo');
+        const locationStatus = document.getElementById('locationStatus');
+        const previewGrid = document.getElementById('previewGrid');
 
-        // Alert functions
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const storage = firebase.storage();
+
+        // Show Alert
         function showAlert(type, title, message) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert ${type}`;
             
-            let iconSvg = '';
-            if (type === 'error') {
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-            } else if (type === 'success') {
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
-            } else if (type === 'info') {
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-            }
+            let icon = '';
+            if (type === 'error') icon = '❌';
+            else if (type === 'success') icon = '✅';
+            else if (type === 'info') icon = 'ℹ️';
+            else if (type === 'warning') icon = '⚠️';
 
             alertDiv.innerHTML = `
-                <div class="icon">${iconSvg}</div>
-                <div>
-                    <div class="alert-title">${title}</div>
-                    <p class="alert-message">${message}</p>
+                <div class="alert-icon">${icon}</div>
+                <div class="alert-content">
+                    <p><strong>${title}</strong></p>
+                    <p>${message}</p>
                 </div>
             `;
 
             alertsContainer.appendChild(alertDiv);
-
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                alertDiv.style.animation = 'slideDown 0.3s ease-out reverse';
-                setTimeout(() => alertDiv.remove(), 300);
-            }, 5000);
+            setTimeout(() => alertDiv.remove(), 5000);
         }
 
-        // Initialize Firebase
-        async function initializeFirebase() {
-            try {
-                if (!window.firebase) {
-                    throw new Error('Firebase SDK not loaded');
-                }
+        // Update Permission Status
+        function updatePermissionStatus() {
+            const allGranted = state.cameraGranted && state.locationGranted;
+            const allDenied = !state.cameraGranted && !state.locationGranted;
+            
+            if (allGranted) {
+                permissionStatus.className = 'status-badge granted';
+                permissionStatus.textContent = 'All Granted';
+            } else if (allDenied) {
+                permissionStatus.className = 'status-badge denied';
+                permissionStatus.textContent = 'All Denied';
+            } else {
+                permissionStatus.className = 'status-badge pending';
+                permissionStatus.textContent = 'Partial';
+            }
 
-                const firebaseConfig = {
-                    apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
-                    projectId: "esrat-4e28f",
-                    databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
-                    storageBucket: "esrat-4e28f.firebasestorage.app",
+            permissionDetails.innerHTML = `
+                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                    <strong>Camera:</strong> 
+                    <span style="color: ${state.cameraGranted ? '#28a745' : '#dc3545'};">
+                        ${state.cameraGranted ? '✓ Granted' : '✗ Denied'}
+                    </span>
+                </p>
+                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                    <strong>Location:</strong> 
+                    <span style="color: ${state.locationGranted ? '#28a745' : '#dc3545'};">
+                        ${state.locationGranted ? '✓ Granted' : '✗ Denied'}
+                    </span>
+                </p>
+            `;
+
+            captureBtn.disabled = !state.cameraGranted || !state.locationGranted;
+        }
+
+        // Request Camera Permission
+        async function requestCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' },
+                    audio: false
+                });
+                
+                state.stream = stream;
+                state.cameraGranted = true;
+                cameraStream.srcObject = stream;
+                cameraPlaceholder.style.display = 'none';
+                updatePermissionStatus();
+                showAlert('success', 'Camera Access', 'Camera permission granted');
+            } catch (error) {
+                state.cameraGranted = false;
+                updatePermissionStatus();
+                showAlert('error', 'Camera Error', error.message || 'Failed to access camera');
+            }
+        }
+
+        // Request Location Permission
+        async function requestLocation() {
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                });
+
+                state.currentLocation = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    accuracy: position.coords.accuracy,
+                    timestamp: new Date().toISOString()
                 };
 
-                firebase.initializeApp(firebaseConfig);
-                isInitialized = true;
-                statusValue.textContent = 'Connected';
-                statusValue.className = 'config-value status-connected';
-                showAlert('success', 'Success', 'Firebase initialized successfully');
-                
-                await loadData();
+                state.locationGranted = true;
+                updateLocationDisplay();
+                updatePermissionStatus();
+                showAlert('success', 'Location Access', 'Location permission granted');
             } catch (error) {
-                const errorMsg = error instanceof Error ? error.message : 'Failed to initialize Firebase';
-                statusValue.textContent = 'Error';
-                statusValue.className = 'config-value';
-                showAlert('error', 'Error', errorMsg);
-                console.error('Firebase initialization error:', error);
+                state.locationGranted = false;
+                updatePermissionStatus();
+                showAlert('error', 'Location Error', error.message || 'Failed to get location');
             }
         }
 
-        // Load data from Firebase
-        async function loadData() {
-            try {
-                setLoading(true);
-                const db = firebase.database();
-                const snapshot = await db.ref('/').once('value');
-                allData = snapshot.val() || {};
-                renderData();
-                showAlert('success', 'Success', 'Data loaded successfully');
-            } catch (error) {
-                const errorMsg = error instanceof Error ? error.message : 'Failed to load data';
-                showAlert('error', 'Error', errorMsg);
-                console.error('Load error:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        // Render data in the UI
-        function renderData() {
-            if (Object.keys(allData).length === 0) {
-                dataContainer.innerHTML = `
-                    <div class="empty-state">
-                        <p>No data in database yet</p>
-                        <p class="text-muted">Write some data using the form on the left</p>
+        // Update Location Display
+        function updateLocationDisplay() {
+            if (state.currentLocation) {
+                locationStatus.innerHTML = `
+                    <div>
+                        <p><strong>Latitude:</strong> ${state.currentLocation.latitude.toFixed(6)}</p>
+                        <p><strong>Longitude:</strong> ${state.currentLocation.longitude.toFixed(6)}</p>
+                        <p><strong>Accuracy:</strong> ±${state.currentLocation.accuracy.toFixed(0)}m</p>
+                        <p><strong>Time:</strong> ${new Date(state.currentLocation.timestamp).toLocaleString()}</p>
                     </div>
                 `;
+            }
+        }
+
+        // Capture Photo
+        async function capturePhoto() {
+            if (!state.cameraGranted || !state.locationGranted) {
+                showAlert('error', 'Error', 'Camera and location permissions required');
                 return;
             }
 
-            dataContainer.innerHTML = Object.entries(allData)
-                .map(([key, value]) => `
-                    <div class="data-item ${selectedKey === key ? 'selected' : ''}" onclick="toggleSelect('${key}')">
-                        <div class="data-item-header">
-                            <div class="data-item-key">${escapeHtml(key)}</div>
-                            ${selectedKey === key ? `<button class="btn-danger" onclick="deleteData('${key}', event)">Delete</button>` : ''}
-                        </div>
-                        <div class="data-item-value">${escapeHtml(JSON.stringify(value, null, 2))}</div>
+            try {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = cameraStream.videoWidth;
+                canvas.height = cameraStream.videoHeight;
+                context.drawImage(cameraStream, 0, 0);
+
+                const photoData = {
+                    image: canvas.toDataURL('image/jpeg', 0.8),
+                    location: state.currentLocation,
+                    timestamp: new Date().toISOString(),
+                    uploadStatus: 'uploading'
+                };
+
+                state.captures.unshift(photoData);
+                renderPreviews();
+                uploadPhoto(photoData, state.captures.length - 1);
+            } catch (error) {
+                showAlert('error', 'Capture Error', error.message);
+            }
+        }
+
+        // Upload Photo to Firebase
+        async function uploadPhoto(photoData, index) {
+            try {
+                const timestamp = new Date().getTime();
+                const filename = `photo_${timestamp}_${Math.random().toString(36).substr(2, 9)}.jpg`;
+                
+                // Convert base64 to blob
+                const response = await fetch(photoData.image);
+                const blob = await response.blob();
+
+                // Upload to Storage
+                const storageRef = storage.ref(`photos/${filename}`);
+                await storageRef.put(blob);
+                const downloadURL = await storageRef.getDownloadURL();
+
+                // Save metadata to Database
+                const photoRecord = {
+                    filename: filename,
+                    imageUrl: downloadURL,
+                    location: photoData.location,
+                    timestamp: photoData.timestamp,
+                    uploadedAt: new Date().toISOString()
+                };
+
+                await db.ref(`photos/${timestamp}`).set(photoRecord);
+
+                state.captures[index].uploadStatus = 'uploaded';
+                renderPreviews();
+                showAlert('success', 'Upload Complete', `Photo uploaded successfully`);
+            } catch (error) {
+                state.captures[index].uploadStatus = 'failed';
+                renderPreviews();
+                showAlert('error', 'Upload Failed', error.message);
+            }
+        }
+
+        // Render Photo Previews
+        function renderPreviews() {
+            previewGrid.innerHTML = state.captures.map((photo, index) => `
+                <div class="preview-item">
+                    <img src="${photo.image}" alt="Captured photo">
+                    <div class="status ${photo.uploadStatus}">
+                        ${photo.uploadStatus === 'uploading' ? '⏳' : 
+                          photo.uploadStatus === 'uploaded' ? '✓' : '✗'}
                     </div>
-                `)
-                .join('');
+                </div>
+            `).join('');
         }
 
-        // Toggle data item selection
-        function toggleSelect(key) {
-            selectedKey = selectedKey === key ? null : key;
-            renderData();
-        }
+        // Event Listeners
+        requestCameraBtn.addEventListener('click', requestCamera);
+        requestLocationBtn.addEventListener('click', requestLocation);
+        captureBtn.addEventListener('click', capturePhoto);
 
-        // Delete data from Firebase
-        async function deleteData(key, event) {
-            event.stopPropagation();
-            try {
-                setLoading(true);
-                const db = firebase.database();
-                await db.ref(`/${key}`).remove();
-                selectedKey = null;
-                showAlert('success', 'Success', `Data deleted successfully: ${key}`);
-                await loadData();
-            } catch (error) {
-                const errorMsg = error instanceof Error ? error.message : 'Failed to delete data';
-                showAlert('error', 'Error', errorMsg);
-                console.error('Delete error:', error);
-            } finally {
-                setLoading(false);
+        // Request permissions on page load
+        window.addEventListener('load', async () => {
+            showAlert('info', 'Permissions Required', 'This app needs camera and location access');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await requestCamera();
+            await requestLocation();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (state.stream) {
+                state.stream.getTracks().forEach(track => track.stop());
             }
-        }
-
-        // Write data to Firebase
-        async function writeData() {
-            const key = dataKeyInput.value.trim();
-            const value = dataValueInput.value.trim();
-
-            if (!key || !value) {
-                showAlert('error', 'Error', 'Key and value cannot be empty');
-                return;
-            }
-
-            try {
-                setLoading(true);
-                const db = firebase.database();
-                
-                let valueToStore = value;
-                try {
-                    valueToStore = JSON.parse(value);
-                } catch {
-                    // Keep as string if not valid JSON
-                }
-                
-                await db.ref(`/${key}`).set(valueToStore);
-                
-                showAlert('success', 'Success', `Data written successfully: ${key}`);
-                dataValueInput.value = '';
-                dataKeyInput.value = 'testData';
-                
-                await loadData();
-            } catch (error) {
-                const errorMsg = error instanceof Error ? error.message : 'Failed to write data';
-                showAlert('error', 'Error', errorMsg);
-                console.error('Write error:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        // Helper: Set loading state
-        function setLoading(loading) {
-            isLoading = loading;
-            writeBtn.disabled = loading || !isInitialized;
-            refreshBtn.disabled = loading;
-            dataKeyInput.disabled = loading;
-            dataValueInput.disabled = loading;
-
-            if (loading) {
-                writeBtn.innerHTML = '<svg class="spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1rem; height: 1rem;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Writing...';
-            } else {
-                writeBtn.innerHTML = 'Write to Database';
-            }
-        }
-
-        // Helper: Escape HTML
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        // Event listeners
-        writeBtn.addEventListener('click', writeData);
-        refreshBtn.addEventListener('click', loadData);
-
-        // Initialize on page load
-        window.addEventListener('load', initializeFirebase);
+        });
     </script>
 </body>
 </html>
