@@ -10,122 +10,117 @@
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
 
-<!-- Google Fonts for luxury feel -->
+<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-  /* --- Global Styles --- */
-  * { box-sizing: border-box; margin:0; padding:0; font-family: 'Roboto', sans-serif; }
-  body { background: linear-gradient(145deg,#1a1a1a,#111); color: #eee; display:flex; flex-direction:column; min-height:100vh; }
-  h1 { text-align:center; margin:20px 0; font-weight:700; color:#fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
-  
-  /* --- Chat container --- */
-  #chatContainer {
-    flex:1;
-    overflow-y:auto;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-  }
+/* --- Global --- */
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Roboto',sans-serif; }
+body { background: linear-gradient(145deg,#1a1a1a,#111); color:#eee; display:flex; flex-direction:column; min-height:100vh; }
+h1 { text-align:center; padding:20px; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,0.7); }
 
-  .message-card {
-    background: rgba(30,30,30,0.9);
-    border-radius: 15px;
-    padding:15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    display:flex;
-    flex-direction: column;
-    transition: transform 0.2s ease, opacity 0.3s ease;
-  }
+/* --- Gallery --- */
+#gallery {
+  flex:1;
+  overflow-y:auto;
+  display:grid;
+  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+  gap:20px;
+  padding:20px;
+}
 
-  .message-card img {
-    max-width: 100%;
-    border-radius: 12px;
-    margin-top:10px;
-  }
+.card {
+  background: rgba(30,30,30,0.95);
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 6px 20px rgba(0,0,0,0.6);
+  display:flex;
+  flex-direction:column;
+  transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+  opacity:0;
+}
 
-  .message-footer {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:10px;
-    font-size:0.85em;
-    color:#ccc;
-  }
+.card.show { opacity:1; transform: translateY(0); }
 
-  .like-btn {
-    background: transparent;
-    border:none;
-    color: #ff5f5f;
-    font-weight:bold;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:5px;
-    transition: transform 0.2s;
-  }
-  .like-btn:hover { transform: scale(1.2); }
+.card img {
+  width:100%;
+  object-fit:cover;
+  max-height:300px;
+  background:#222;
+}
 
-  /* --- Input area --- */
-  #inputArea {
-    display:flex;
-    gap:10px;
-    padding:15px 20px;
-    background: #111;
-    border-top:1px solid #333;
-    flex-shrink:0;
-  }
+.card-content {
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 
-  #inputArea input[type="text"] {
-    flex:1;
-    padding:10px 15px;
-    border-radius: 12px;
-    border:none;
-    font-size:1em;
-    outline:none;
-    background: #222;
-    color:#fff;
-  }
+.card-text { font-size:1em; }
+.card-footer { display:flex; justify-content:space-between; font-size:0.85em; color:#ccc; align-items:center; }
 
-  #inputArea input[type="file"] {
-    display:none;
-  }
+.like { color:#ff5f5f; font-weight:bold; display:flex; align-items:center; gap:5px; cursor:pointer; }
+.like:hover { transform: scale(1.1); transition:0.2s; }
 
-  #inputArea label {
-    background: linear-gradient(135deg,#ff7a18,#af002d);
-    padding:10px 15px;
-    border-radius:12px;
-    cursor:pointer;
-    color:#fff;
-    font-weight:bold;
-    transition: transform 0.2s;
-  }
-  #inputArea label:hover { transform: scale(1.05); }
+/* --- Input --- */
+#inputArea {
+  display:flex;
+  gap:10px;
+  padding:15px 20px;
+  background:#111;
+  border-top:1px solid #333;
+  flex-shrink:0;
+}
 
-  #sendBtn {
-    background: linear-gradient(135deg,#18ff7a,#00af2d);
-    padding:10px 15px;
-    border-radius:12px;
-    border:none;
-    color:#111;
-    font-weight:bold;
-    cursor:pointer;
-    transition: transform 0.2s;
-  }
-  #sendBtn:hover { transform: scale(1.05); }
+#inputArea input[type="text"] {
+  flex:1;
+  padding:10px 15px;
+  border-radius:12px;
+  border:none;
+  font-size:1em;
+  outline:none;
+  background:#222;
+  color:#fff;
+}
 
-  /* Scrollbar style */
-  #chatContainer::-webkit-scrollbar { width:8px; }
-  #chatContainer::-webkit-scrollbar-thumb { background: #444; border-radius:4px; }
+#inputArea input[type="file"] { display:none; }
 
+#inputArea label {
+  background: linear-gradient(135deg,#ff7a18,#af002d);
+  padding:10px 15px;
+  border-radius:12px;
+  cursor:pointer;
+  color:#fff;
+  font-weight:bold;
+  transition: transform 0.2s;
+}
+#inputArea label:hover { transform: scale(1.05); }
+
+#sendBtn {
+  background: linear-gradient(135deg,#18ff7a,#00af2d);
+  padding:10px 15px;
+  border-radius:12px;
+  border:none;
+  color:#111;
+  font-weight:bold;
+  cursor:pointer;
+  transition: transform 0.2s;
+}
+#sendBtn:hover { transform: scale(1.05); }
+
+#gallery::-webkit-scrollbar { width:8px; }
+#gallery::-webkit-scrollbar-thumb { background:#444; border-radius:4px; }
+
+@media(max-width:600px){
+  #gallery { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
 
 <h1>💬 Anonymous Confession Board</h1>
 
-<div id="chatContainer"></div>
+<div id="gallery"></div>
 
 <div id="inputArea">
   <input type="text" id="msgInput" placeholder="Write your confession..." />
@@ -135,116 +130,119 @@
 </div>
 
 <script>
-  // ----- Firebase Config -----
-  const firebaseConfig = {
-    apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
-    authDomain: "esrat-4e28f.firebaseapp.com",
-    databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
-    projectId: "esrat-4e28f",
-    storageBucket: "esrat-4e28f.firebasestorage.app",
-    messagingSenderId: "712315598095",
-    appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
+// ----- Firebase Config -----
+const firebaseConfig = {
+  apiKey: "AIzaSyCG9ALTmqJPklSBJriWZysOrV0-bYxz84A",
+  authDomain: "esrat-4e28f.firebaseapp.com",
+  databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+  projectId: "esrat-4e28f",
+  storageBucket: "esrat-4e28f.firebasestorage.app",
+  messagingSenderId: "712315598095",
+  appId: "1:712315598095:web:2e0c3e91726c1ace312e89"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const storage = firebase.storage();
+
+const gallery = document.getElementById('gallery');
+const msgInput = document.getElementById('msgInput');
+const imageInput = document.getElementById('imageInput');
+const sendBtn = document.getElementById('sendBtn');
+
+// ----- Send message -----
+sendBtn.addEventListener('click', async () => {
+  const text = msgInput.value.trim();
+  const file = imageInput.files[0];
+  if(!text && !file) return;
+
+  const timestamp = Date.now();
+  let filename = null;
+
+  if(file){
+    const ext = file.name.split('.').pop();
+    filename = `confessions/${timestamp}.${ext}`;
+    const ref = storage.ref(filename);
+    await ref.put(file);
+  }
+
+  const messageData = {
+    text:text||"",
+    image: filename||"",
+    timestamp: timestamp,
+    likes:0
   };
+  db.ref("confessions/"+timestamp).set(messageData);
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const storage = firebase.storage();
+  msgInput.value = "";
+  imageInput.value = null;
+});
 
-  const chatContainer = document.getElementById('chatContainer');
-  const msgInput = document.getElementById('msgInput');
-  const imageInput = document.getElementById('imageInput');
-  const sendBtn = document.getElementById('sendBtn');
+// ----- Display messages -----
+function addMessageToGallery(data){
+  const card = document.createElement('div');
+  card.className='card';
+  card.style.transform="translateY(20px)";
 
-  // ----- Send message function -----
-  sendBtn.addEventListener('click', async () => {
-    const text = msgInput.value.trim();
-    const file = imageInput.files[0];
-    if(!text && !file) return;
+  const content = document.createElement('div');
+  content.className='card-content';
 
-    const timestamp = Date.now();
-    let filename = null;
+  if(data.text){
+    const textDiv = document.createElement('div');
+    textDiv.className='card-text';
+    textDiv.innerText = data.text;
+    content.appendChild(textDiv);
+  }
 
-    // Upload image if selected
-    if(file){
-      const ext = file.name.split('.').pop();
-      filename = `confessions/${timestamp}.${ext}`;
-      const ref = storage.ref(filename);
-      await ref.put(file);
-    }
+  if(data.image){
+    const img = document.createElement('img');
+    storage.ref(data.image).getDownloadURL().then(url=> img.src=url);
+    content.appendChild(img);
+  }
 
-    // Push message to DB
-    const messageData = {
-      text: text || "",
-      image: filename || "",
-      timestamp: timestamp,
-      likes: 0
-    };
-    db.ref("confessions/" + timestamp).set(messageData);
+  const footer = document.createElement('div');
+  footer.className='card-footer';
+  const time = new Date(data.timestamp).toLocaleString();
+  footer.innerHTML = `<span>${time}</span>`;
 
-    msgInput.value = "";
-    imageInput.value = null;
+  const likeSpan = document.createElement('span');
+  likeSpan.className='like';
+  likeSpan.innerHTML=`❤️ ${data.likes}`;
+  likeSpan.addEventListener('click',()=>{
+    db.ref("confessions/"+data.timestamp+"/likes").transaction(likes=>(likes||0)+1);
   });
+  footer.appendChild(likeSpan);
 
-  // ----- Listen for new messages -----
-  db.ref("confessions").on("child_added", snapshot => {
-    const data = snapshot.val();
-    const msgCard = document.createElement('div');
-    msgCard.className = 'message-card';
-    
-    // Text
-    if(data.text) msgCard.innerHTML += `<div>${data.text}</div>`;
-    // Image
-    if(data.image){
-      const img = document.createElement('img');
-      storage.ref(data.image).getDownloadURL().then(url => { img.src = url; });
-      msgCard.appendChild(img);
+  content.appendChild(footer);
+  card.appendChild(content);
+
+  gallery.prepend(card);
+
+  setTimeout(()=> card.classList.add('show'),50);
+  gallery.scrollTop=0;
+}
+
+// Listen for new confessions
+db.ref("confessions").orderByChild("timestamp").on("child_added", snapshot=>{
+  const data = snapshot.val();
+  addMessageToGallery(data);
+});
+
+// Update likes in real-time
+db.ref("confessions").on("child_changed", snapshot=>{
+  const data = snapshot.val();
+  const cards = gallery.children;
+  for(let card of cards){
+    const footer = card.querySelector('.card-footer');
+    if(!footer) continue;
+    const likeSpan = footer.querySelector('.like');
+    if(!likeSpan) continue;
+    const timeText = footer.querySelector('span').innerText;
+    if(new Date(data.timestamp).toLocaleString() === timeText){
+      likeSpan.innerHTML = `❤️ ${data.likes}`;
     }
-
-    // Footer (timestamp + like)
-    const footer = document.createElement('div');
-    footer.className = 'message-footer';
-    const time = new Date(data.timestamp).toLocaleString();
-    footer.innerHTML = `<span>${time}</span>`;
-
-    // Like button
-    const likeBtn = document.createElement('button');
-    likeBtn.className = 'like-btn';
-    likeBtn.innerHTML = `❤️ ${data.likes}`;
-    likeBtn.addEventListener('click', () => {
-      db.ref("confessions/"+data.timestamp+"/likes").transaction(likes => (likes||0)+1);
-    });
-
-    footer.appendChild(likeBtn);
-    msgCard.appendChild(footer);
-
-    chatContainer.appendChild(msgCard);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-
-    // Animate
-    msgCard.style.opacity = 0;
-    msgCard.style.transform = "translateY(20px)";
-    setTimeout(() => {
-      msgCard.style.opacity = 1;
-      msgCard.style.transform = "translateY(0)";
-    }, 50);
-  });
-
-  // ----- Listen for likes update -----
-  db.ref("confessions").on("child_changed", snapshot => {
-    const data = snapshot.val();
-    const cards = chatContainer.children;
-    for(let card of cards){
-      const footer = card.querySelector('.message-footer');
-      if(!footer) continue;
-      const likeBtn = footer.querySelector('.like-btn');
-      if(!likeBtn) continue;
-      if(new Date(data.timestamp).getTime() == data.timestamp){
-        likeBtn.innerHTML = `❤️ ${data.likes}`;
-      }
-    }
-  });
-
+  }
+});
 </script>
+
 </body>
 </html>
