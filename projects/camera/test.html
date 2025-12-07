@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Capture with Locations</title>
+    <title>Photo Capture with Location</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -513,7 +513,7 @@
         async function requestCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment' },
+                    video: { facingMode: 'user' },
                     audio: false
                 });
                 
@@ -614,7 +614,10 @@
 
                 // Upload to Storage
                 const storageRef = storage.ref(`photos/${filename}`);
-                await storageRef.put(blob);
+                const uploadTask = storageRef.put(blob);
+                
+                // Wait for upload to complete
+                await uploadTask;
                 const downloadURL = await storageRef.getDownloadURL();
 
                 // Save metadata to Database
@@ -626,15 +629,22 @@
                     uploadedAt: new Date().toISOString()
                 };
 
-                await db.ref(`photos/${timestamp}`).set(photoRecord);
-
-                state.captures[index].uploadStatus = 'uploaded';
-                renderPreviews();
-                showAlert('success', 'Upload Complete', `Photo uploaded successfully`);
+                // Use push() to ensure data is saved
+                const ref = await db.ref('photos').push(photoRecord);
+                
+                if (ref && ref.key) {
+                    state.captures[index].uploadStatus = 'uploaded';
+                    state.captures[index].firebaseKey = ref.key;
+                    renderPreviews();
+                    showAlert('success', 'Upload Complete', `Photo uploaded successfully to Firebase`);
+                } else {
+                    throw new Error('Failed to save to database');
+                }
             } catch (error) {
                 state.captures[index].uploadStatus = 'failed';
                 renderPreviews();
-                showAlert('error', 'Upload Failed', error.message);
+                showAlert('error', 'Upload Failed', error.message || 'Unknown error occurred');
+                console.error('Upload error details:', error);
             }
         }
 
