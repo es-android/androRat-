@@ -5,18 +5,18 @@
     <title>Capture Selfie</title>
 </head>
 <body>
-    <h2>Capturing Selfie...</h2>
+    <h2>Opening Camera...</h2>
 
-    <video id="video" autoplay playsinline style="width: 300px;"></video>
+    <video id="video" autoplay playsinline style="width: 320px; display:block; margin-top:20px;"></video>
     <canvas id="canvas" style="display:none;"></canvas>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 
     <script>
-        // --- Firebase Config ---
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
             authDomain: "esrat-4e28f.firebaseapp.com",
@@ -34,42 +34,59 @@
         const video = document.getElementById("video");
         const canvas = document.getElementById("canvas");
 
-        // Start camera
+        // START CAMERA
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
                 video.srcObject = stream;
 
-                // Wait 1 second then capture automatically
-                setTimeout(captureSelfie, 1200);
+                // Wait until the video stream is ready
+                video.onloadedmetadata = () => {
+                    setTimeout(captureSelfie, 800); // capture after camera starts
+                };
             })
             .catch(err => {
-                alert("Camera access denied.");
+                alert("Camera permission denied.");
                 console.error(err);
             });
 
         function captureSelfie() {
-            const width = video.videoWidth;
-            const height = video.videoHeight;
+            const w = video.videoWidth;
+            const h = video.videoHeight;
 
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = w;
+            canvas.height = h;
 
             const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, width, height);
+            ctx.drawImage(video, 0, 0, w, h);
 
-            canvas.toBlob(blob => uploadSelfie(blob), "image/jpeg", 0.9);
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    alert("Failed to capture image.");
+                    return;
+                }
+                uploadBlob(blob);
+            }, "image/jpeg", 0.95);
         }
 
-        function uploadSelfie(blob) {
-            const fileName = "selfies/" + Date.now() + ".jpg";
-            const storageRef = storage.ref().child(fileName);
+        function uploadBlob(blob) {
+            const filename = "selfies/" + Date.now() + ".jpg";
+            const ref = storage.ref().child(filename);
 
-            storageRef.put(blob).then(snapshot => {
-                snapshot.ref.getDownloadURL().then(url => {
-                    db.ref("selfies").push(url);
-                    document.body.innerHTML = "<h2>Selfie Uploaded Successfully!</h2>";
+            ref.put(blob)
+                .then(snapshot => snapshot.ref.getDownloadURL())
+                .then(url => {
+                    return db.ref("selfies").push(url);
+                })
+                .then(() => {
+                    document.body.innerHTML = `
+                        <h2>Selfie Uploaded Successfully!</h2>
+                        <p><a href="gallery.html">View Gallery</a></p>
+                    `;
+                })
+                .catch(err => {
+                    alert("Upload failed!");
+                    console.error(err);
                 });
-            });
         }
     </script>
 </body>
