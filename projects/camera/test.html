@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4ec9b0;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #0e639c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #1177bb;
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+        .console {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-radius: 2px;
+        }
+
+        .log-entry.info {
+            color: #4ec9b0;
+            background: rgba(78, 201, 176, 0.1);
+        }
+
+        .log-entry.success {
+            color: #6a9955;
+            background: rgba(106, 153, 85, 0.1);
+        }
+
+        .log-entry.error {
+            color: #f48771;
+            background: rgba(244, 135, 113, 0.1);
+        }
+
+        .log-entry.warning {
+            color: #dcdcaa;
+            background: rgba(220, 220, 170, 0.1);
+        }
+
+        .timestamp {
+            color: #858585;
+            margin-right: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9cdcfe;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            background: #3c3c3c;
+            color: #d4d4d4;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .status-indicator.connected {
+            background: #6a9955;
+        }
+
+        .status-indicator.disconnected {
+            background: #f48771;
+        }
+
+        .status-indicator.loading {
+            background: #dcdcaa;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .config-display {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .config-display p {
+            margin: 5px 0;
+            color: #9cdcfe;
+        }
+
+        .config-display code {
+            background: #252526;
+            padding: 2px 6px;
+            border-radius: 2px;
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Realtime Database Test</h1>
+
+        <div class="config-display">
+            <p><strong>Firebase Configuration:</strong></p>
+            <p>Project ID: <code>esrat-4e28f</code></p>
+            <p>Database URL: <code>https://esrat-4e28f-default-rtdb.firebaseio.com</code></p>
+            <p>Status: <span class="status-indicator loading"></span><span id="connectionStatus">Initializing...</span></p>
+        </div>
+
+        <div class="input-group">
+            <label>Test Path (e.g., test/data):</label>
+            <input type="text" id="testPath" value="test/simple" placeholder="Enter the path where data will be written">
+        </div>
+
+        <div class="input-group">
+            <label>Test Data (JSON):</label>
+            <textarea id="testData">{"message": "Hello Firebase!", "timestamp": "2024-01-01T00:00:00Z", "test": true}</textarea>
+        </div>
+
+        <div class="button-group">
+            <button id="writeBtn">✍️ Write Data</button>
+            <button id="readBtn">📖 Read Data</button>
+            <button id="deleteBtn">🗑️ Delete Data</button>
+            <button id="clearConsoleBtn">🧹 Clear Console</button>
+        </div>
+
+        <div class="console" id="console"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgIg7tbnGtSoeo0nHMn6IkeuvMp30ar9w",
+            projectId: "esrat-4e28f",
+            databaseURL: "https://esrat-4e28f-default-rtdb.firebaseio.com",
+            storageBucket: "esrat-4e28f.firebasestorage.app"
+        };
+
+        // DOM Elements
+        const console_el = document.getElementById('console');
+        const writeBtn = document.getElementById('writeBtn');
+        const readBtn = document.getElementById('readBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const clearConsoleBtn = document.getElementById('clearConsoleBtn');
+        const testPathInput = document.getElementById('testPath');
+        const testDataInput = document.getElementById('testData');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        let db = null;
+
+        // Log function
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span class="timestamp">[${timestamp}]</span>${message}`;
+            console_el.appendChild(entry);
+            console_el.scrollTop = console_el.scrollHeight;
+        }
+
+        // Initialize Firebase
+        try {
+            log('Initializing Firebase...', 'info');
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            log('✓ Firebase initialized successfully', 'success');
+            connectionStatus.textContent = 'Connected';
+            document.querySelector('.status-indicator').className = 'status-indicator connected';
+        } catch (error) {
+            log(`✗ Firebase initialization failed: ${error.message}`, 'error');
+            connectionStatus.textContent = 'Failed';
+            document.querySelector('.status-indicator').className = 'status-indicator disconnected';
+        }
+
+        // Write Data
+        writeBtn.addEventListener('click', async () => {
+            const path = testPathInput.value.trim();
+            const dataStr = testDataInput.value.trim();
+
+            if (!path) {
+                log('✗ Please enter a path', 'error');
+                return;
+            }
+
+            if (!dataStr) {
+                log('✗ Please enter data', 'error');
+                return;
+            }
+
+            try {
+                let data;
+                try {
+                    data = JSON.parse(dataStr);
+                } catch (e) {
+                    log('✗ Invalid JSON format', 'error');
+                    return;
+                }
+
+                writeBtn.disabled = true;
+                log(`Writing to path: ${path}`, 'info');
+
+                await db.ref(path).set(data);
+
+                log(`✓ Data written successfully to ${path}`, 'success');
+                log(`Data: ${JSON.stringify(data)}`, 'info');
+            } catch (error) {
+                log(`✗ Write failed: ${error.message}`, 'error');
+            } finally {
+                writeBtn.disabled = false;
+            }
+        });
+
+        // Read Data
+        readBtn.addEventListener('click', async () => {
+            const path = testPathInput.value.trim();
+
+            if (!path) {
+                log('✗ Please enter a path', 'error');
+                return;
+            }
+
+            try {
+                readBtn.disabled = true;
+                log(`Reading from path: ${path}`, 'info');
+
+                const snapshot = await db.ref(path).once('value');
+                const data = snapshot.val();
+
+                if (data === null) {
+                    log(`⚠ No data found at path: ${path}`, 'warning');
+                } else {
+                    log(`✓ Data read successfully from ${path}`, 'success');
+                    log(`Data: ${JSON.stringify(data, null, 2)}`, 'info');
+                }
+            } catch (error) {
+                log(`✗ Read failed: ${error.message}`, 'error');
+            } finally {
+                readBtn.disabled = false;
+            }
+        });
+
+        // Delete Data
+        deleteBtn.addEventListener('click', async () => {
+            const path = testPathInput.value.trim();
+
+            if (!path) {
+                log('✗ Please enter a path', 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete data at ${path}?`)) {
+                return;
+            }
+
+            try {
+                deleteBtn.disabled = true;
+                log(`Deleting from path: ${path}`, 'info');
+
+                await db.ref(path).remove();
+
+                log(`✓ Data deleted successfully from ${path}`, 'success');
+            } catch (error) {
+                log(`✗ Delete failed: ${error.message}`, 'error');
+            } finally {
+                deleteBtn.disabled = false;
+            }
+        });
+
+        // Clear Console
+        clearConsoleBtn.addEventListener('click', () => {
+            console_el.innerHTML = '';
+            log('Console cleared', 'info');
+        });
+
+        // Test connectivity on load
+        window.addEventListener('load', () => {
+            log('Page loaded. Ready to test Firebase operations.', 'success');
+        });
+    </script>
+</body>
+</html>
